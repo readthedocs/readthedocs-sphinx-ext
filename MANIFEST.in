@@ -1,0 +1,3 @@
+recursive-include websupport2 *.css
+recursive-include websupport2 *.js_t
+include *.rst
