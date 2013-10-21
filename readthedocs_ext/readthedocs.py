@@ -7,6 +7,12 @@ from sphinx.util.console import bold
 
 from .translator import UUIDTranslator
 
+MEDIA_MAPPING = {
+    "_static/jquery.js": "{{ MEDIA_URL }}javascript/jquery.js",
+    "_static/underscore.js": "{{ MEDIA_URL }}javascript/underscore.js",
+    "_static/doctools.js": "{{ MEDIA_URL }}javascript/doctools.js",
+}
+
 def copy_media(app, exception):
     if app.builder.name != 'readthedocs' or exception:
         return
@@ -42,8 +48,13 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         if context.has_key('slug'):
             self.project = context['slug']
 
+        # Put in our media files instead of putting them in the docs.
+        for index, file in enum(self.script_files):
+            if file in MEDIA_MAPPING.keys():
+                self.script_files[index] = MEDIA_MAPPING[file]
         # add our custom bits
-        self.script_files.append('_static/readthedocs-ext.js')
+        self.script_files.append('{{ MEDIA_URL }}javascript/readthedocs-ext.js')
+        #self.script_files.append('_static/readthedocs-ext.js')
 
     def init_translator_class(self):
         self.translator_class = UUIDTranslator
