@@ -1,3 +1,1 @@
-// Read the Docs Project information
-var doc_version = "{{ current_version }}";
-var doc_slug = "{{ slug }}";
+// Intentionally left blank

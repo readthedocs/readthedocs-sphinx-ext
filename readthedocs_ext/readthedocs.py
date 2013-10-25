@@ -5,12 +5,10 @@ from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.util import copy_static_entry
 from sphinx.util.console import bold
 
-from .translator import UUIDTranslator
-
 MEDIA_MAPPING = {
-    "_static/jquery.js": "{{ MEDIA_URL }}javascript/jquery.js",
-    "_static/underscore.js": "{{ MEDIA_URL }}javascript/underscore.js",
-    "_static/doctools.js": "{{ MEDIA_URL }}javascript/doctools.js",
+    "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
+    "_static/underscore.js": "%sjavascript/underscore.js",
+    "_static/doctools.js": "%sjavascript/doctools.js",
 }
 
 def copy_media(app, exception):
@@ -31,10 +29,10 @@ def copy_media(app, exception):
 
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
     """
-    Builds documents for the web support package.
+    Adds specific media files to script_files and css_files.
     """
     name = 'readthedocs'
-    versioning_method = 'commentable'
+    #versioning_method = 'commentable'
     slug = None
     version = None
 
@@ -49,15 +47,23 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
             self.project = context['slug']
 
         # Put in our media files instead of putting them in the docs.
-        for index, file in enum(self.script_files):
+        for index, file in enumerate(self.script_files):
             if file in MEDIA_MAPPING.keys():
-                self.script_files[index] = MEDIA_MAPPING[file]
+                self.script_files[index] = MEDIA_MAPPING[file] % context['MEDIA_URL']
+                if file == "_static/jquery.js":
+                    self.script_files.insert(index+1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % context['MEDIA_URL'])
         # add our custom bits
-        self.script_files.append('{{ MEDIA_URL }}javascript/readthedocs-ext.js')
         #self.script_files.append('_static/readthedocs-ext.js')
+        #self.script_files.append('%sjavascript/readthedocs-ext.js' % context['MEDIA_URL'])
 
-    def init_translator_class(self):
-        self.translator_class = UUIDTranslator
+        # We include the media servers version here so we can update rtd.js across all
+        # documentation without rebuilding every one. 
+        # If this script is embedded in each build, 
+        # then updating the file across all docs is basically impossible.
+        self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
+        #self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
+        self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
+        self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
