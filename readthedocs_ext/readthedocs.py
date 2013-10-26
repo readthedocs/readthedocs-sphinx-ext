@@ -59,8 +59,8 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
             self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
 
         # Analytics codes
-        self.script_files.append('_static/readthedocs-ext.js')
-        self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
+        #self.script_files.append('_static/readthedocs-ext.js')
+        #self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
 
         # We include the media servers version here so we can update rtd.js across all
         # documentation without rebuilding every one. 
