@@ -61,7 +61,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         # If this script is embedded in each build, 
         # then updating the file across all docs is basically impossible.
         self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
-        #self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
+        self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
         self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
         self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
