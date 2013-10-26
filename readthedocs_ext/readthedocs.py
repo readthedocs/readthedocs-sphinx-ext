@@ -52,17 +52,21 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
                 self.script_files[index] = MEDIA_MAPPING[file] % context['MEDIA_URL']
                 if file == "_static/jquery.js":
                     self.script_files.insert(index+1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % context['MEDIA_URL'])
-        # add our custom bits
-        #self.script_files.append('_static/readthedocs-ext.js')
-        #self.script_files.append('%sjavascript/readthedocs-ext.js' % context['MEDIA_URL'])
+
+        if context.has_key('html_theme') and context['html_theme'] == 'sphinx_rtd_theme':
+            self.css_files.append('%scss/sphinx_rtd_theme.css' % context['MEDIA_URL'])
+        else:
+            self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
+
+        # Analytics codes
+        self.script_files.append('_static/readthedocs-ext.js')
+        self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
 
         # We include the media servers version here so we can update rtd.js across all
         # documentation without rebuilding every one. 
         # If this script is embedded in each build, 
         # then updating the file across all docs is basically impossible.
         self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
-        self.script_files.append('%sjavascript/analytics.js' % context['MEDIA_URL'])
-        self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
         self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
 def setup(app):
