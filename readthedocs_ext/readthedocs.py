@@ -41,9 +41,9 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
         # Pull project data from conf.py if it exists
         context = self.config.html_context
-        if context.has_key('current_version'):
+        if 'current_version' in context:
             self.version = context['current_version']
-        if context.has_key('slug'):
+        if 'slug' in context:
             self.project = context['slug']
 
         # Put in our media files instead of putting them in the docs.
