@@ -41,9 +41,9 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
         # Pull project data from conf.py if it exists
         context = self.config.html_context
-        if context.has_key('current_version'):
+        if 'current_version' in context:
             self.version = context['current_version']
-        if context.has_key('slug'):
+        if 'slug' in context:
             self.project = context['slug']
 
         # Put in our media files instead of putting them in the docs.
@@ -53,7 +53,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
                 if file == "_static/jquery.js":
                     self.script_files.insert(index+1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % context['MEDIA_URL'])
 
-        if context.has_key('html_theme') and context['html_theme'] == 'sphinx_rtd_theme':
+        if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             self.css_files.append('%scss/sphinx_rtd_theme.css' % context['MEDIA_URL'])
         else:
             self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
