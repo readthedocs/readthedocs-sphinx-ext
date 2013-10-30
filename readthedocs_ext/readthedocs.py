@@ -5,6 +5,8 @@ from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.util import copy_static_entry
 from sphinx.util.console import bold
 
+#from .translation import RTDTranslator
+
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
     "_static/underscore.js": "%sjavascript/underscore.js",
@@ -35,6 +37,10 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
     #versioning_method = 'commentable'
     slug = None
     version = None
+
+    # Comment this out for now, but have it in case we need to edit element behavior
+    #def init_translator_class(self):
+        #self.translator_class = RTDTranslator
 
     def init(self):
         StandaloneHTMLBuilder.init(self)

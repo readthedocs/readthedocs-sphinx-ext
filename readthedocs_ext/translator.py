@@ -6,21 +6,16 @@ from sphinx.writers.html import HTMLTranslator
 from sphinx.util.websupport import is_commentable
 
 
-class UUIDTranslator(HTMLTranslator):
+class RTDTranslator(HTMLTranslator):
     """
     Our custom HTML translator.
     """
 
-    def dispatch_visit(self, node):
-        if is_commentable(node):
-            self.handle_visit_commentable(node)
-        HTMLTranslator.dispatch_visit(self, node)
+    def visit_table(self, node):
+        self.body.append('<div class="wy-repsonsive-table">')
+        self._table_row_index = 0
+        return BaseTranslator.visit_table(self, node)
 
-    def handle_visit_commentable(self, node):
-        # We will place the node in the HTML id attribute. If the node
-        # already has an id (for indexing purposes) put an empty
-        # span with the existing id directly before this node's HTML.
-        if node.attributes['ids']:
-            self.body.append('<span id="%s"></span>'
-                             % node.attributes['ids'][0])
-        node.attributes['ids'] = ['s%s' % node.uid]
+    def depart_table(self, node):
+        self.body.append('</div>')
+        return BaseTranslator.depart_table(self, node)
