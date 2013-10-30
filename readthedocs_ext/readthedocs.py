@@ -115,6 +115,9 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
     def write_doc(self, docname, doctree):
+        """
+        Overwrite the body with our own custom body bits.
+        """
         destination = StringOutput(encoding='utf-8')
         doctree.settings = self.docsettings
 
