@@ -134,13 +134,13 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
             html = READ_THE_DOCS_BODY.format(
                 slug=context['slug'],
                 current_version=context['current_version'],
-                pagename=context['pagename'],
+                pagename=docname,
                 html_theme=context['html_theme'],
             )
             body += html
         except Exception:
             # Don't error on RTD code
-            pass 
+            raise
         # End RTD Additions
         metatags = self.docwriter.clean_meta
 
