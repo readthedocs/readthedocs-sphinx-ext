@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+from django.template import Template, Context
 from docutils.io import StringOutput
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.util import copy_static_entry
@@ -128,7 +129,12 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         self.docwriter.write(doctree, destination)
         self.docwriter.assemble_parts()
         body = self.docwriter.parts['fragment']
-        body += READ_THE_DOCS_BODY
+        # RTD Additions
+        context = self.config.html_context
+        html = Template(READ_THE_DOCS_BODY).render(context)
+        body += html
+
+        # End RTD Additions
         metatags = self.docwriter.clean_meta
 
         ctx = self.get_doc_context(docname, body, metatags)
