@@ -136,6 +136,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
                 current_version=context['current_version'],
                 pagename=context['pagename'],
                 html_theme=context['html_theme'],
+            )
             body += html
         except Exception:
             # Don't error on RTD code
