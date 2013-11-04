@@ -33,12 +33,6 @@ def copy_media(app, exception):
 READ_THE_DOCS_BODY = """
     <!-- RTD Injected Body -->
 
-    <link rel="stylesheet" href="https://media.readthedocs.org/css/badge_only.css" type="text/css" />
-    <link rel="stylesheet" href="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
-    <script type="text/javascript" src="https://media.readthedocs.org/javascript/jquery/jquery-2.0.3.min.js"></script>
-    <script type="text/javascript" src="https://media.readthedocs.org/javascript/jquery/jquery-migrate-1.2.1.min.js"></script>
-    <script type="text/javascript" src="https://media.readthedocs.org/javascript/underscore.js"></script>
-    <script type="text/javascript" src="https://media.readthedocs.org/javascript/doctools.js"></script>
     <script type="text/javascript" src="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
 
     <script type="text/javascript">
