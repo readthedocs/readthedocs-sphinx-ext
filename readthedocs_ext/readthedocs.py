@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 
+from django.template import Template, Context
+from docutils.io import StringOutput
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.util import copy_static_entry
+from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 
 #from .translation import RTDTranslator
@@ -28,6 +31,43 @@ def copy_media(app, exception):
         copy_static_entry(source, dest_dir, app.builder, ctx)
         app.info('done')
 
+
+READ_THE_DOCS_BODY = """
+    <!-- RTD Injected Body -->
+
+    <script type="text/javascript" src="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
+
+    <script type="text/javascript">
+      // This is included here because other places don't have access to the pagename variable.
+      var READTHEDOCS_DATA = {
+        project: "{{ slug }}",
+        version: "{{ current_version }}",
+        page: "{{ pagename }}",
+        theme: "{{ html_theme }}"
+      }
+      // Old variables
+      var doc_version = "{{ current_version }}";
+      var doc_slug = "{{ slug }}";
+      var page_name = "{{ pagename }}";
+      var html_theme = "{{ html_theme }}";
+    </script>    
+
+    <!-- RTD Analytics Code -->
+    <!-- Included in the header because you don't have a footer block. -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-17997319-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <!-- End RTD Analytics Code -->
+    <!-- End RTD Injected Body -->
+"""
 
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
     """
@@ -74,6 +114,31 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         # then updating the file across all docs is basically impossible.
         self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
         self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
+
+    def write_doc(self, docname, doctree):
+        """
+        Overwrite the body with our own custom body bits.
+        """
+        destination = StringOutput(encoding='utf-8')
+        doctree.settings = self.docsettings
+
+        self.secnumbers = self.env.toc_secnumbers.get(docname, {})
+        self.imgpath = relative_uri(self.get_target_uri(docname), '_images')
+        self.dlpath = relative_uri(self.get_target_uri(docname), '_downloads')
+        self.current_docname = docname
+        self.docwriter.write(doctree, destination)
+        self.docwriter.assemble_parts()
+        body = self.docwriter.parts['fragment']
+        # RTD Additions
+        context = self.config.html_context
+        html = Template(READ_THE_DOCS_BODY).render(context)
+        body += html
+
+        # End RTD Additions
+        metatags = self.docwriter.clean_meta
+
+        ctx = self.get_doc_context(docname, body, metatags)
+        self.handle_page(docname, ctx, event_arg=doctree)
 
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
