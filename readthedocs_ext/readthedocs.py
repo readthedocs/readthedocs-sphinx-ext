@@ -130,10 +130,13 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         self.docwriter.assemble_parts()
         body = self.docwriter.parts['fragment']
         # RTD Additions
-        context = self.config.html_context
-        html = Template(READ_THE_DOCS_BODY).render(context)
-        body += html
-
+        try:
+            context = self.config.html_context
+            html = Template(READ_THE_DOCS_BODY).render(context)
+            body += html
+        except Exception:
+            # Don't error on RTD code
+            pass 
         # End RTD Additions
         metatags = self.docwriter.clean_meta
 
