@@ -106,8 +106,8 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         # documentation without rebuilding every one. 
         # If this script is embedded in each build, 
         # then updating the file across all docs is basically impossible.
-        self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
-        self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
+        #self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
+        #self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
     def write_doc(self, docname, doctree):
         """
@@ -127,7 +127,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         try:
             context = self.config.html_context
             html = READ_THE_DOCS_BODY % (context['slug'], context['current_version'], docname, context['html_theme'])
-            body += html
+            # body += html
         except Exception:
             # Don't error on RTD code
             pass
