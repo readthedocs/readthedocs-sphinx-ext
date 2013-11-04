@@ -140,7 +140,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
             body += html
         except Exception:
             # Don't error on RTD code
-            raise
+            pass
         # End RTD Additions
         metatags = self.docwriter.clean_meta
 
