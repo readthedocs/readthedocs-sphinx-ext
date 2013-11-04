@@ -127,6 +127,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         try:
             context = self.config.html_context
             html = READ_THE_DOCS_BODY % (context['slug'], context['current_version'], docname, context['html_theme'])
+            # Turn this off for now
             # body += html
         except Exception:
             # Don't error on RTD code
