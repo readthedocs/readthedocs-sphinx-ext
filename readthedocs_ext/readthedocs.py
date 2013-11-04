@@ -34,6 +34,7 @@ def copy_media(app, exception):
 READ_THE_DOCS_BODY = """
     <!-- RTD Injected Body -->
 
+    <link rel="stylesheet" href="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
     <script type="text/javascript" src="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
 
     <script type="text/javascript">
@@ -128,7 +129,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
             context = self.config.html_context
             html = READ_THE_DOCS_BODY % (context['slug'], context['current_version'], docname, context['html_theme'])
             # Turn this off for now
-            # body += html
+            body += html
         except Exception:
             # Don't error on RTD code
             pass
