@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
 
-from django.template import Template, Context
 from docutils.io import StringOutput
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.util import copy_static_entry
@@ -40,16 +39,16 @@ READ_THE_DOCS_BODY = """
     <script type="text/javascript">
       // This is included here because other places don't have access to the pagename variable.
       var READTHEDOCS_DATA = {
-        project: "{{ slug }}",
-        version: "{{ current_version }}",
-        page: "{{ pagename }}",
-        theme: "{{ html_theme }}"
+        project: "{slug}",
+        version: "{current_version}",
+        page: "{pagename}",
+        theme: "{html_theme}"
       }
       // Old variables
-      var doc_version = "{{ current_version }}";
-      var doc_slug = "{{ slug }}";
-      var page_name = "{{ pagename }}";
-      var html_theme = "{{ html_theme }}";
+      var doc_version = "{current_version}";
+      var doc_slug = "{slug}";
+      var page_name = "{pagename}";
+      var html_theme = "{html_theme}";
     </script>    
 
     <!-- RTD Analytics Code -->
@@ -132,7 +131,11 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         # RTD Additions
         try:
             context = self.config.html_context
-            html = Template(READ_THE_DOCS_BODY).render(context)
+            html = READ_THE_DOCS_BODY.format(
+                slug=context['slug'],
+                current_version=context['current_version'],
+                pagename=context['pagename'],
+                html_theme=context['html_theme'],
             body += html
         except Exception:
             # Don't error on RTD code
