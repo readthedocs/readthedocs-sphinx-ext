@@ -22,11 +22,14 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         StandaloneHTMLBuilder.init(self)
 
         # Pull project data from conf.py if it exists
-        context = self.config.html_context
-        if 'current_version' in context:
-            self.version = context['current_version']
-        if 'slug' in context:
-            self.project = context['slug']
+        try:
+            context = self.config.html_context
+            if 'current_version' in context:
+                self.version = context['current_version']
+            if 'slug' in context:
+                self.project = context['slug']
+        except:
+            pass
 
         # Put in our media files instead of putting them in the docs.
         for index, file in enumerate(self.script_files):
@@ -65,6 +68,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         self.docwriter.write(doctree, destination)
         self.docwriter.assemble_parts()
         body = self.docwriter.parts['fragment']
+
         # RTD Additions
         try:
             context = self.config.html_context
@@ -85,8 +89,8 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         except Exception:
             # Don't error on RTD code
             pass
-            #raise
         # End RTD Additions
+
         metatags = self.docwriter.clean_meta
 
         ctx = self.get_doc_context(docname, body, metatags)
