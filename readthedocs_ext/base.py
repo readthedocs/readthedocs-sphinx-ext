@@ -53,7 +53,8 @@ READ_THE_DOCS_BODY = """
         project: "%s",
         version: "%s",
         page: "%s",
-        theme: "%s"
+        theme: "%s",
+        docroot: "%s"
       }
     </script>    
 
