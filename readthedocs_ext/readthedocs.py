@@ -1,9 +1,68 @@
 # -*- coding: utf-8 -*-
+import os
+
 from docutils.io import StringOutput
 from sphinx.builders.html import StandaloneHTMLBuilder
+from sphinx.util import copy_static_entry
 from sphinx.util.osutil import relative_uri
+from sphinx.util.console import bold
 
-from .base import MEDIA_MAPPING, copy_media, READ_THE_DOCS_BODY, USER_ANALYTICS_CODE
+#from .translation import RTDTranslator
+
+MEDIA_MAPPING = {
+    "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
+    "_static/underscore.js": "%sjavascript/underscore.js",
+    "_static/doctools.js": "%sjavascript/doctools.js",
+}
+
+def copy_media(app, exception):
+    if app.builder.name != 'readthedocs' or exception:
+        return
+    for file in ['readthedocs-ext.js_t']:
+        app.info(bold('Copying %s... ' % file), nonl=True)
+        dest_dir = os.path.join(app.builder.outdir, '_static')
+        source = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), 
+            '_static', 
+            file
+        )
+        ctx = app.builder.globalcontext
+        copy_static_entry(source, dest_dir, app.builder, ctx)
+        app.info('done')
+
+
+READ_THE_DOCS_BODY = """
+    <!-- RTD Injected Body -->
+
+    <link rel="stylesheet" href="%scss/readthedocs-doc-embed.css" type="text/css" />
+    <script type="text/javascript" src="%sjavascript/readthedocs-doc-embed.js"></script>
+
+    <script type="text/javascript">
+      // This is included here because other places don't have access to the pagename variable.
+      var READTHEDOCS_DATA = {
+        project: "%s",
+        version: "%s",
+        page: "%s",
+        theme: "%s"
+      }
+    </script>    
+
+    <!-- RTD Analytics Code -->
+    <!-- Included in the header because you don't have a footer block. -->
+    <script type="text/javascript">
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-17997319-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+    </script>
+    <!-- End RTD Analytics Code -->
+    <!-- End RTD Injected Body -->
+"""
 
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
     """
@@ -22,14 +81,11 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         StandaloneHTMLBuilder.init(self)
 
         # Pull project data from conf.py if it exists
-        try:
-            context = self.config.html_context
-            if 'current_version' in context:
-                self.version = context['current_version']
-            if 'slug' in context:
-                self.project = context['slug']
-        except:
-            pass
+        context = self.config.html_context
+        if 'current_version' in context:
+            self.version = context['current_version']
+        if 'slug' in context:
+            self.project = context['slug']
 
         # Put in our media files instead of putting them in the docs.
         for index, file in enumerate(self.script_files):
@@ -68,29 +124,18 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         self.docwriter.write(doctree, destination)
         self.docwriter.assemble_parts()
         body = self.docwriter.parts['fragment']
-
         # RTD Additions
         try:
             context = self.config.html_context
             # Really need a real templating language here
-            html = READ_THE_DOCS_BODY % (
-                context['MEDIA_URL'], 
-                context['MEDIA_URL'],
-                context['slug'],
-                context['current_version'],
-                docname,
-                context['html_theme'],
-                context['conf_py_path']
-            )
-            code = context.get('analytics_code')
-            if code:
-                html += USER_ANALYTICS_CODE % code
+            html = READ_THE_DOCS_BODY % (context['MEDIA_URL'], context['MEDIA_URL'], context['slug'], context['current_version'], docname, context['html_theme'])
+            # Turn this off for now
             body += html
         except Exception:
             # Don't error on RTD code
             pass
+            #raise
         # End RTD Additions
-
         metatags = self.docwriter.clean_meta
 
         ctx = self.get_doc_context(docname, body, metatags)

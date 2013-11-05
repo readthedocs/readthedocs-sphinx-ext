@@ -1,10 +1,31 @@
 # -*- coding: utf-8 -*-
+import os
 
-from docutils.io import StringOutput
 from sphinx.builders.html import DirectoryHTMLBuilder
-from sphinx.util.osutil import relative_uri
+from sphinx.util import copy_static_entry
+from sphinx.util.console import bold
 
-from .base import MEDIA_MAPPING, copy_media, READ_THE_DOCS_BODY, USER_ANALYTICS_CODE
+MEDIA_MAPPING = {
+    "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
+    "_static/underscore.js": "%sjavascript/underscore.js",
+    "_static/doctools.js": "%sjavascript/doctools.js",
+}
+
+def copy_media(app, exception):
+    if app.builder.name != 'readthedocs' or exception:
+        return
+    for file in ['readthedocs-ext.js_t']:
+        app.info(bold('Copying %s... ' % file), nonl=True)
+        dest_dir = os.path.join(app.builder.outdir, '_static')
+        source = os.path.join(
+            os.path.abspath(os.path.dirname(__file__)), 
+            '_static', 
+            file
+        )
+        ctx = app.builder.globalcontext
+        copy_static_entry(source, dest_dir, app.builder, ctx)
+        app.info('done')
+
 
 class ReadtheDocsBuilder(DirectoryHTMLBuilder):
     """
@@ -19,14 +40,11 @@ class ReadtheDocsBuilder(DirectoryHTMLBuilder):
         DirectoryHTMLBuilder.init(self)
 
         # Pull project data from conf.py if it exists
-        try:
-            context = self.config.html_context
-            if 'current_version' in context:
-                self.version = context['current_version']
-            if 'slug' in context:
-                self.project = context['slug']
-        except:
-            pass
+        context = self.config.html_context
+        if context.has_key('current_version'):
+            self.version = context['current_version']
+        if context.has_key('slug'):
+            self.project = context['slug']
 
         # Put in our media files instead of putting them in the docs.
         for index, file in enumerate(self.script_files):
@@ -35,7 +53,7 @@ class ReadtheDocsBuilder(DirectoryHTMLBuilder):
                 if file == "_static/jquery.js":
                     self.script_files.insert(index+1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % context['MEDIA_URL'])
 
-        if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
+        if context.has_key('html_theme') and context['html_theme'] == 'sphinx_rtd_theme':
             self.css_files.append('%scss/sphinx_rtd_theme.css' % context['MEDIA_URL'])
         else:
             self.css_files.append('%scss/badge_only.css' % context['MEDIA_URL'])
@@ -48,50 +66,8 @@ class ReadtheDocsBuilder(DirectoryHTMLBuilder):
         # documentation without rebuilding every one. 
         # If this script is embedded in each build, 
         # then updating the file across all docs is basically impossible.
-        #self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
-        #self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
-
-    def write_doc(self, docname, doctree):
-        """
-        Overwrite the body with our own custom body bits.
-        """
-        destination = StringOutput(encoding='utf-8')
-        doctree.settings = self.docsettings
-
-        self.secnumbers = self.env.toc_secnumbers.get(docname, {})
-        self.imgpath = relative_uri(self.get_target_uri(docname), '_images')
-        self.dlpath = relative_uri(self.get_target_uri(docname), '_downloads')
-        self.current_docname = docname
-        self.docwriter.write(doctree, destination)
-        self.docwriter.assemble_parts()
-        body = self.docwriter.parts['fragment']
-
-        # RTD Additions
-        try:
-            context = self.config.html_context
-            # Really need a real templating language here
-            html = READ_THE_DOCS_BODY % (
-                context['MEDIA_URL'],
-                context['MEDIA_URL'],
-                context['slug'],
-                context['current_version'],
-                docname,
-                context['html_theme'],
-                context['conf_py_path']
-            )
-            code = context.get('analytics_code')
-            if code:
-                html += USER_ANALYTICS_CODE % code
-            body += html
-        except Exception:
-            # Don't error on RTD code
-            pass
-        # End RTD Additions
-
-        metatags = self.docwriter.clean_meta
-        ctx = self.get_doc_context(docname, body, metatags)
-        self.handle_page(docname, ctx, event_arg=doctree)
-
+        self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
+        self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
