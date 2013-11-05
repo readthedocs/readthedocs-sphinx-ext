@@ -4,7 +4,7 @@ from docutils.io import StringOutput
 from sphinx.builders.html import DirectoryHTMLBuilder
 from sphinx.util.osutil import relative_uri
 
-from .base import MEDIA_MAPPING, copy_media, READ_THE_DOCS_BODY
+from .base import MEDIA_MAPPING, copy_media, READ_THE_DOCS_BODY, USER_ANALYTICS_CODE
 
 class ReadtheDocsBuilder(DirectoryHTMLBuilder):
     """
@@ -67,7 +67,9 @@ class ReadtheDocsBuilder(DirectoryHTMLBuilder):
             context = self.config.html_context
             # Really need a real templating language here
             html = READ_THE_DOCS_BODY % (context['MEDIA_URL'], context['MEDIA_URL'], context['slug'], context['current_version'], docname, context['html_theme'])
-            # Turn this off for now
+            code = context.get('analytics_code')
+            if code:
+                html += USER_ANALYTICS_CODE % code
             body += html
         except Exception:
             # Don't error on RTD code
