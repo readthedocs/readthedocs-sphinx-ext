@@ -109,36 +109,6 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         #self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
         #self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
-    def write_doc(self, docname, doctree):
-        """
-        Overwrite the body with our own custom body bits.
-        """
-        destination = StringOutput(encoding='utf-8')
-        doctree.settings = self.docsettings
-
-        self.secnumbers = self.env.toc_secnumbers.get(docname, {})
-        self.imgpath = relative_uri(self.get_target_uri(docname), '_images')
-        self.dlpath = relative_uri(self.get_target_uri(docname), '_downloads')
-        self.current_docname = docname
-        self.docwriter.write(doctree, destination)
-        self.docwriter.assemble_parts()
-        body = self.docwriter.parts['fragment']
-        # RTD Additions
-        try:
-            context = self.config.html_context
-            html = READ_THE_DOCS_BODY % (context['slug'], context['current_version'], docname, context['html_theme'])
-            # Turn this off for now
-            # body += html
-        except Exception:
-            # Don't error on RTD code
-            pass
-            #raise
-        # End RTD Additions
-        metatags = self.docwriter.clean_meta
-
-        ctx = self.get_doc_context(docname, body, metatags)
-        self.handle_page(docname, ctx, event_arg=doctree)
-
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
     app.connect('build-finished', copy_media)
