@@ -34,8 +34,8 @@ def copy_media(app, exception):
 READ_THE_DOCS_BODY = """
     <!-- RTD Injected Body -->
 
-    <link rel="stylesheet" href="https://media.readthedocs.org/css/readthedocs-doc-embed.css" type="text/css" />
-    <script type="text/javascript" src="https://media.readthedocs.org/javascript/readthedocs-doc-embed.js"></script>
+    <link rel="stylesheet" href="%scss/readthedocs-doc-embed.css" type="text/css" />
+    <script type="text/javascript" src="%sjavascript/readthedocs-doc-embed.js"></script>
 
     <script type="text/javascript">
       // This is included here because other places don't have access to the pagename variable.
@@ -127,7 +127,8 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         # RTD Additions
         try:
             context = self.config.html_context
-            html = READ_THE_DOCS_BODY % (context['slug'], context['current_version'], docname, context['html_theme'])
+            # Really need a real templating language here
+            html = READ_THE_DOCS_BODY % (context['MEDIA_URL'], context['MEDIA_URL'], context['slug'], context['current_version'], docname, context['html_theme'])
             # Turn this off for now
             body += html
         except Exception:
