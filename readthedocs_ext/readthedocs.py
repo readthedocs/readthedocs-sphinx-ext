@@ -43,7 +43,8 @@ READ_THE_DOCS_BODY = """
         project: "%s",
         version: "%s",
         page: "%s",
-        theme: "%s"
+        theme: "%s",
+        docroot: "%s"
       }
     </script>    
 
@@ -128,7 +129,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         try:
             context = self.config.html_context
             # Really need a real templating language here
-            html = READ_THE_DOCS_BODY % (context['MEDIA_URL'], context['MEDIA_URL'], context['slug'], context['current_version'], docname, context['html_theme'])
+            html = READ_THE_DOCS_BODY % (context['MEDIA_URL'], context['MEDIA_URL'], context['slug'], context['current_version'], docname, context['html_theme'], context['conf_py_path'])
             # Turn this off for now
             body += html
         except Exception:
