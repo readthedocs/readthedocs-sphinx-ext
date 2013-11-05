@@ -106,8 +106,8 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
         # documentation without rebuilding every one. 
         # If this script is embedded in each build, 
         # then updating the file across all docs is basically impossible.
-        #self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
-        #self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
+        self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
+        self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
