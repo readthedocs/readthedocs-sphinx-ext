@@ -2,7 +2,7 @@
 import os
 
 from docutils.io import StringOutput
-from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
+from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder
 from sphinx.util import copy_static_entry
 from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
