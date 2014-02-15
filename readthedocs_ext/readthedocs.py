@@ -193,9 +193,33 @@ class ReadtheDocsSingleFileHTMLBuilder(SingleFileHTMLBuilder):
         self.script_files.append('%sjavascript/readthedocs-doc-embed.js' % context['MEDIA_URL'])
         self.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
+class ReadtheDocsSingleFileHTMLBuilderLocalMedia(SingleFileHTMLBuilder):
+    """
+    Adds specific media files to script_files and css_files.
+    """
+    name = 'readthedocssinglehtmllocalmedia'
+    #versioning_method = 'commentable'
+    slug = None
+    version = None
+
+    def init(self):
+        SingleFileHTMLBuilder.init(self)
+
+        # Pull project data from conf.py if it exists
+        context = self.config.html_context
+        if context.has_key('current_version'):
+            self.version = context['current_version']
+        if context.has_key('slug'):
+            self.project = context['slug']
+
+        if context.has_key('html_theme') and context['html_theme'] == 'sphinx_rtd_theme':
+            self.css_files.append('_static/css/theme.css')
+        else:
+            self.css_files.append('_static/css/badge_only.css')
 
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
     app.add_builder(ReadtheDocsDirectoryHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
+    app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('build-finished', copy_media)
