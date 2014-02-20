@@ -1,12 +1,5 @@
 import codecs
-try:
-    from setuptools import setup, find_packages
-    extra_setup = dict(
-        install_requires = [''],
-        )
-except ImportError:
-    from distutils.core import setup
-    extra_setup = {}
+from distutils.core import setup
 
 setup(
     name='readthedocs-sphinx-ext',
@@ -24,5 +17,4 @@ setup(
     package_data = {
         '': ['_static/*.js_t', '_static/*.css'],
     },
-    **extra_setup
 )
