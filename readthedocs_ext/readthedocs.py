@@ -24,7 +24,10 @@ def copy_media(app, exception):
             '_static', 
             file
         )
-        ctx = app.builder.globalcontext
+        try:
+            ctx = app.builder.globalcontext
+        except AttributeError:
+            ctx = {}
         copy_static_entry(source, dest_dir, app.builder, ctx)
         app.info('done')
 
