@@ -55,8 +55,8 @@ def finalize_media(builder, local=False):
 
 
     # Analytics codes
-    builder.script_files.append('_static/readthedocs-data.js')
-    builder.script_files.append('_static/readthedocs-dynamic-include.js')
+    # builder.script_files.append('_static/readthedocs-data.js')
+    # builder.script_files.append('_static/readthedocs-dynamic-include.js')
 
     # We include the media servers version here so we can update rtd.js across all
     # documentation without rebuilding every one. 
