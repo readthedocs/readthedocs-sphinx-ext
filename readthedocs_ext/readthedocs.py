@@ -43,7 +43,7 @@ def finalize_media(builder, local=False):
                 builder.script_files.insert(index+1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % context['MEDIA_URL'])
 
     if local:
-        if context.has_key('html_theme') and context['html_theme'] == 'sphinx_rtd_theme':
+        if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             builder.css_files.append('_static/css/theme.css')
         else:
             builder.css_files.append('_static/css/badge_only.css')
