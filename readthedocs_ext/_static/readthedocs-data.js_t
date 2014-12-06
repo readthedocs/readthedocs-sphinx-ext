@@ -4,9 +4,11 @@
     language: "{{ rtd_language }}",
     page: "{{ pagename }}",
     theme: "{{ html_theme }}",
+    builder: "sphinx",
     docroot: "{{ conf_py_path }}",
     source_suffix: "{{ source_suffix }}",
-    api_host: "{{ api_host }}"
+    api_host: "{{ api_host }}",
+    commit: "{{ commit }}"
   }
   
   // Old variables
