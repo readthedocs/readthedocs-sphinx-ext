@@ -7,7 +7,7 @@ from sphinx.util import copy_static_entry
 from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 
-from websupport2 import mixin, translator
+from .websupport2 import mixin, translator
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
