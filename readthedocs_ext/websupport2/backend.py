@@ -3,7 +3,9 @@ import requests
 
 from sphinx.websupport.storage import StorageBackend
 
+
 class WebStorage(StorageBackend):
+
     """
     A storage class meant to be used by the Sphinx Builder to store nodes.
 
@@ -25,7 +27,7 @@ class WebStorage(StorageBackend):
 
     def has_node(self, id):
         url = self.url + "/_has_node"
-        data = {'node_id': id,}
+        data = {'node_id': id, }
         self._add_server_data(data)
         r = requests.get(url, params=data)
         print "Checking node %s" % (r.status_code)
@@ -37,8 +39,8 @@ class WebStorage(StorageBackend):
     def add_node(self, id, document, source):
         url = self.url + "/_add_node"
         data = {
-            'id': id, 
-            'document': document, 
+            'id': id,
+            'document': document,
             'source': source
         }
         self._add_server_data(data)

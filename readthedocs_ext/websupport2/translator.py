@@ -7,6 +7,7 @@ from sphinx.util.websupport import is_commentable
 
 
 class UUIDTranslator(HTMLTranslator):
+
     """
     Our custom HTML translator.
     """

@@ -24,6 +24,7 @@ STATIC_FILES = [
     'jquery.pageslide.js',
 ]
 
+
 def copy_media(app, exception):
     if app.builder.name == 'readthedocs' and not exception:
         for file in ['readthedocs-dynamic-include.js_t', 'readthedocs-data.js_t']:
@@ -50,11 +51,15 @@ def copy_media(app, exception):
                 '_static',
                 file
             )
-            ctx = app.builder.globalcontext
+            try:
+                ctx = app.builder.globalcontext
+            except AttributeError:
+                ctx = {}
             ctx['websupport2_base_url'] = app.builder.config.websupport2_base_url
             ctx['websupport2_static_url'] = app.builder.config.websupport2_static_url
             copy_static_entry(source, dest_dir, app.builder, ctx)
             app.info('done')
+
 
 def finalize_media(builder, local=False):
     # Pull project data from conf.py if it exists
