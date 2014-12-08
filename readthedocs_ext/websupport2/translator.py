@@ -25,7 +25,7 @@ class UUIDTranslator(HTMLTranslator):
         # We will place the node in the HTML id attribute. If the node
         # already has an id (for indexing purposes) put an empty
         # span with the existing id directly before this node's HTML.
-        #self.add_db_node(node)
+        self.add_db_node(node)
         if node.attributes['ids']:
             self.body.append('<span id="%s"></span>'
                              % node.attributes['ids'][0])
