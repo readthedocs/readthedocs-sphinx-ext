@@ -1,13 +1,13 @@
 // Module exporting page-level variables for easy use
 module.exports = {
-	project: doc_slug,
-	version: doc_version,
+	project: READTHEDOCS_DATA['project'],
+	version: READTHEDOCS_DATA['version'],
 	page: getPageName()
 }
 
 function getPageName() {
-	if (typeof page_name != "undefined") {
-	  return page_name
+	if ('page' in READTHEDOCS_DATA) {
+	  return READTHEDOCS_DATA['page']
 	} else {
 	  stripped = window.location.pathname.substring(1)
 	  stripped = stripped.replace(".html", "")
