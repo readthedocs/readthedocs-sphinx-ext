@@ -2,6 +2,8 @@
 
 # From sphinx.writers.websupport
 
+import hashlib
+
 from sphinx.writers.html import HTMLTranslator
 from sphinx.util.websupport import is_commentable
 
@@ -29,7 +31,9 @@ class UUIDTranslator(HTMLTranslator):
         if node.attributes['ids']:
             self.body.append('<span id="%s"></span>'
                              % node.attributes['ids'][0])
-        node.attributes['ids'] = ['%s' % node.uid]
+        source = node.rawsource or node.astext()
+        _hash = hashlib.md5(source).hexdigest()
+        node.attributes['ids'] = ['%s' % _hash]
         node.attributes['classes'].append(self.comment_class)
 
     def add_db_node(self, node):
