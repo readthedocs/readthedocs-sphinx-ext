@@ -12,6 +12,12 @@ class UUIDTranslator(HTMLTranslator):
 
     """
     Our custom HTML translator.
+
+    index = node.parent.index(node)
+    parent = node.parent
+    document = node.document
+    text = node.astext()
+    source = node.rawsource
     """
 
     def __init__(self, builder, *args, **kwargs):
@@ -25,7 +31,12 @@ class UUIDTranslator(HTMLTranslator):
 
     def hash_node(self, node):
         source = node.rawsource or node.astext()
-        return u'md5-%s' % hashlib.md5(source).hexdigest()
+
+        try:
+            ret = u'md5-%s' % hashlib.md5(source).hexdigest()
+        except UnicodeEncodeError:
+            ret = u'md5-%s' % hashlib.md5(source.decode('ascii', 'ignore')).hexdigest()
+        return ret
 
     def handle_visit_commentable(self, node):
         # We will place the node in the HTML id attribute. If the node
