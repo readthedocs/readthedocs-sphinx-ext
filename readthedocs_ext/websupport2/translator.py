@@ -2,6 +2,7 @@
 
 # From sphinx.writers.websupport
 
+import uuid
 import hashlib
 
 from sphinx.writers.html import HTMLTranslator
@@ -35,7 +36,7 @@ class UUIDTranslator(HTMLTranslator):
         try:
             ret = u'md5-%s' % hashlib.md5(source).hexdigest()
         except UnicodeEncodeError:
-            ret = u'md5-%s' % hashlib.md5(source.decode('ascii', 'ignore')).hexdigest()
+            ret = u'uuid-%s' % str(uuid.uuid1())
         return ret
 
     def handle_visit_commentable(self, node):
