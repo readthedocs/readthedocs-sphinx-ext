@@ -25,7 +25,7 @@ class UUIDTranslator(HTMLTranslator):
 
     def hash_node(self, node):
         source = node.rawsource or node.astext()
-        return 'md5-%s' % hashlib.md5(source).hexdigest()
+        return u'md5-%s' % hashlib.md5(source).hexdigest()
 
     def handle_visit_commentable(self, node):
         # We will place the node in the HTML id attribute. If the node
