@@ -112,8 +112,8 @@ class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
 
     def init(self):
         StandaloneHTMLBuilder.init(self)
-        mixin.CommentMixin.init(self)
         finalize_media(self)
+        mixin.CommentMixin.init(self)
 
     def init_translator_class(self):
         self.translator_class = translator.UUIDTranslator
@@ -141,8 +141,8 @@ class ReadtheDocsDirectoryHTMLBuilderComments(DirectoryHTMLBuilder):
 
     def init(self):
         DirectoryHTMLBuilder.init(self)
-        mixin.CommentMixin.init(self)
         finalize_media(self)
+        mixin.CommentMixin.init(self)
 
     def init_translator_class(self):
         self.translator_class = translator.UUIDTranslator
