@@ -9,9 +9,20 @@ from sphinx.writers.html import HTMLTranslator
 
 
 def is_commentable(node):
-    # return node.__class__.__name__ in ('paragraph', 'literal_block')
-    # if not parent.class == 'td':
-    return node.tagname == 'paragraph'
+    # if node.tagname in ['table']:
+    #     return True
+    if node.tagname == 'paragraph':
+        # http://www.slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions Slide 75
+        # https://www.youtube.com/watch?v=8vwtgMkqE9o
+        if node.parent and node.parent.parent:
+            if node.parent.parent.tagname == 'row':
+                pass
+                #import ipdb; ipdb.set_trace()
+        if node.parent and node.parent.parent and node.parent.parent.parent:
+            if node.parent.parent.parent.tagname == 'tbody':
+                return False
+            else:
+                return True
 
 
 class UUIDTranslator(HTMLTranslator):
