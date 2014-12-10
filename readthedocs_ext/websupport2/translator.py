@@ -3,10 +3,15 @@
 # From sphinx.writers.websupport
 
 import uuid
-import hashlib
+import nilsimsa
 
 from sphinx.writers.html import HTMLTranslator
-from sphinx.util.websupport import is_commentable
+
+
+def is_commentable(node):
+    # return node.__class__.__name__ in ('paragraph', 'literal_block')
+    # if not parent.class == 'td':
+    return node.tagname == 'paragraph'
 
 
 class UUIDTranslator(HTMLTranslator):
@@ -32,9 +37,10 @@ class UUIDTranslator(HTMLTranslator):
 
     def hash_node(self, node):
         source = node.rawsource or node.astext()
+        index = node.parent.index(node)
 
         try:
-            ret = u'md5-%s' % hashlib.md5(source).hexdigest()
+            ret = u'nil-{index}-{hash}'.format(index=index, hash=nilsimsa.Nilsimsa(source).hexdigest())
         except UnicodeEncodeError:
             ret = u'uuid-%s' % str(uuid.uuid1())
         return ret
