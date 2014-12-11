@@ -7,7 +7,7 @@ from sphinx.util import copy_static_entry
 from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 
-from .websupport2 import mixin, translator
+from .comments import backend, translator
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
@@ -94,6 +94,24 @@ def finalize_media(builder, local=False):
     builder.css_files.append('%scss/readthedocs-doc-embed.css' % context['MEDIA_URL'])
 
 
+def finalize_comment_media(builder):
+    # Pull project data from conf.py if it exists
+    context = builder.config.html_context
+    if 'current_version' in context:
+        builder.version = context['current_version']
+    if 'slug' in context:
+        builder.project = context['slug']
+
+    builder.storage = backend.WebStorage(builder=builder)
+
+    # add our custom bits
+    builder.script_files.append('_static/jquery.pageslide.js')
+    builder.script_files.append('_static/websupport2-bundle.js')
+    builder.css_files.append('_static/websupport2.css')
+    builder.css_files.append('_static/sphinxweb.css')
+    builder.css_files.append('_static/jquery.pageslide.css')
+
+
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
     """
@@ -113,7 +131,7 @@ class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
     def init(self):
         StandaloneHTMLBuilder.init(self)
         finalize_media(self)
-        mixin.CommentMixin.init(self)
+        finalize_comment_media(self)
 
     def init_translator_class(self):
         self.translator_class = translator.UUIDTranslator
@@ -142,7 +160,7 @@ class ReadtheDocsDirectoryHTMLBuilderComments(DirectoryHTMLBuilder):
     def init(self):
         DirectoryHTMLBuilder.init(self)
         finalize_media(self)
-        mixin.CommentMixin.init(self)
+        finalize_comment_media(self)
 
     def init_translator_class(self):
         self.translator_class = translator.UUIDTranslator

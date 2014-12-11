@@ -49,7 +49,7 @@ function initMetaData() {
      withCredentials: true,
    },
    success: function(data) {
-      settings.metadata = data
+      settings.metadata = jQuery.extend(settings.metadata, data);
       displayCommentIcon()
    },
    error: function(request, textStatus, error) {

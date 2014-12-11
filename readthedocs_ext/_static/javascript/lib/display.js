@@ -8,12 +8,6 @@ module.exports = {
 function initDisplay() {
     $('body').append("<div id='current-comment'></div>");
     $('body').append("<div id='pageslide'></div>");
-    $.ajax({
-      url: "https://api.grokthedocs.com/static/javascript/pageslide/jquery.pageslide.js",
-      crossDomain: true,
-      dataType: "script",
-      cache: true,
-    });
 }
 
 function closeComments() {

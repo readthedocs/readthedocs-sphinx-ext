@@ -25,6 +25,28 @@ class WebStorage(StorageBackend):
         if hasattr(self.builder, 'project'):
             data['project'] = self.builder.project
 
+    def get_comments(self, node):
+        url = self.url + "/_get_comments"
+        data = {'node': node}
+        self._add_server_data(data)
+        r = requests.get(url, params=data)
+        print "Getting comments %s" % (r.status_code)
+        if r.status_code is 200:
+            return r.json()
+        else:
+            return False
+
+    def get_metadata(self, page):
+        url = self.url + "/_get_metadata"
+        data = {'page': page}
+        self._add_server_data(data)
+        r = requests.get(url, params=data)
+        print "Getting metadata %s" % (r.status_code)
+        if r.status_code is 200:
+            return r.json()
+        else:
+            return False
+
     def has_node(self, id):
         url = self.url + "/_has_node"
         data = {'node_id': id, }
@@ -47,4 +69,17 @@ class WebStorage(StorageBackend):
         headers = {'Content-type': 'application/json'}
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print "Adding node %s" % (r.status_code)
+        return True
+
+    def update_node(self, old_hash, new_hash, commit):
+        url = self.url + "/_update_node"
+        data = {
+            'old_hash': old_hash,
+            'new_hash': new_hash,
+            'commit': commit
+        }
+        self._add_server_data(data)
+        headers = {'Content-type': 'application/json'}
+        r = requests.post(url, data=json.dumps(data), headers=headers)
+        print "Updating node %s" % (r.status_code)
         return True

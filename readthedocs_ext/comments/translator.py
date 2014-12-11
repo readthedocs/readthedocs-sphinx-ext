@@ -7,11 +7,15 @@ import nilsimsa
 
 from sphinx.writers.html import HTMLTranslator
 
+# Between 128 and -128, the higher the number, the closer the strings are
+NILSIMSA_LIMIT = 70
+
 
 def is_commentable(node):
-    # if node.tagname in ['table']:
-    #     return True
-    if node.tagname == 'paragraph':
+    if node.tagname in ['title']:
+        return True
+    if node.tagname in ['paragraph']:
+        # More info
         # http://www.slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions Slide 75
         # https://www.youtube.com/watch?v=8vwtgMkqE9o
         if node.parent and node.parent.parent:
@@ -21,8 +25,9 @@ def is_commentable(node):
         if node.parent and node.parent.parent and node.parent.parent.parent:
             if node.parent.parent.parent.tagname == 'tbody':
                 return False
-            else:
-                return True
+        return True
+
+    return False
 
 
 class UUIDTranslator(HTMLTranslator):
@@ -46,9 +51,12 @@ class UUIDTranslator(HTMLTranslator):
             self.handle_visit_commentable(node)
         HTMLTranslator.dispatch_visit(self, node)
 
-    def hash_node(self, node):
+    def hash_node(self, node, obj=False):
         source = node.rawsource or node.astext()
         index = node.parent.index(node)
+
+        if obj:
+            return nilsimsa.Nilsimsa(source)
 
         try:
             ret = u'nil-{index}-{hash}'.format(index=index, hash=nilsimsa.Nilsimsa(source).hexdigest())
@@ -70,7 +78,23 @@ class UUIDTranslator(HTMLTranslator):
     def add_db_node(self, node):
         storage = self.builder.storage
         _hash = self.hash_node(node)
-        if not storage.has_node(_hash):
-            storage.add_node(id=_hash,
-                             document=self.builder.current_docname,
-                             source=node.rawsource or node.astext())
+        has_node = storage.has_node(_hash)
+        nodes = storage.get_metadata(self.builder.current_docname)
+        CLOSE_FOUND = False
+        if not has_node:
+            for node_hash in nodes.keys():
+                if not node_hash.startswith('nil'):
+                    continue
+                nim_hash = node_hash.split('-')[-1]
+                difference = self.hash_node(node, obj=True).compare(nim_hash, True)
+                print "Nope: %s %s %s" % (nim_hash, difference, node.rawsource)
+                if difference > NILSIMSA_LIMIT:
+                    # Node is the same
+                    CLOSE_FOUND = True
+                    nodes = storage.update_node(old_hash=node_hash, new_hash=_hash, commit='foobar')
+                    print "CLOSE: %s %s %s" % (nim_hash, difference, node.rawsource)
+                    break
+            if not CLOSE_FOUND:
+                storage.add_node(id=_hash,
+                                 document=self.builder.current_docname,
+                                 source=node.rawsource or node.astext())

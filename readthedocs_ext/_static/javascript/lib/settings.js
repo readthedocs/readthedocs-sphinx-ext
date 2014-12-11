@@ -4,6 +4,7 @@ var staticURL = "{{ websupport2_static_url }}";
 var metadata = {}
 
 var opts = {
+  // Dynamic Content
   processVoteURL: baseURL + '/_process_vote',
   addCommentURL: baseURL + '/_add_comment',
   getCommentsURL: baseURL + '/_get_comments',
@@ -12,6 +13,7 @@ var opts = {
   metadataURL: baseURL + '/_get_metadata',
   optionsURL: baseURL + '/_get_options',
 
+  // Static Content
   commentImage: staticURL + '/_static/comment.png',
   closeCommentImage: staticURL + '/_static/comment-close.png',
   loadingImage: staticURL + '/_static/ajax-loader.gif',
@@ -29,6 +31,7 @@ var opts = {
 module.exports = {
   metadata: metadata,
   opts: opts,
-  staticURL: staticURL
+  staticURL: staticURL,
+  baseURL: baseURL
 }
 

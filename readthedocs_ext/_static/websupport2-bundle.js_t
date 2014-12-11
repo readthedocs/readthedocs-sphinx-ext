@@ -63,7 +63,7 @@ function initMetaData() {
      withCredentials: true,
    },
    success: function(data) {
-      settings.metadata = data
+      settings.metadata = jQuery.extend(settings.metadata, data);
       displayCommentIcon()
    },
    error: function(request, textStatus, error) {
@@ -171,12 +171,6 @@ module.exports = {
 function initDisplay() {
     $('body').append("<div id='current-comment'></div>");
     $('body').append("<div id='pageslide'></div>");
-    $.ajax({
-      url: "https://api.grokthedocs.com/static/javascript/pageslide/jquery.pageslide.js",
-      crossDomain: true,
-      dataType: "script",
-      cache: true,
-    });
 }
 
 function closeComments() {
@@ -317,6 +311,7 @@ var staticURL = "{{ websupport2_static_url }}";
 var metadata = {}
 
 var opts = {
+  // Dynamic Content
   processVoteURL: baseURL + '/_process_vote',
   addCommentURL: baseURL + '/_add_comment',
   getCommentsURL: baseURL + '/_get_comments',
@@ -325,6 +320,7 @@ var opts = {
   metadataURL: baseURL + '/_get_metadata',
   optionsURL: baseURL + '/_get_options',
 
+  // Static Content
   commentImage: staticURL + '/_static/comment.png',
   closeCommentImage: staticURL + '/_static/comment-close.png',
   loadingImage: staticURL + '/_static/ajax-loader.gif',
@@ -342,7 +338,8 @@ var opts = {
 module.exports = {
   metadata: metadata,
   opts: opts,
-  staticURL: staticURL
+  staticURL: staticURL,
+  baseURL: baseURL
 }
 
 
