@@ -76,8 +76,10 @@ class UUIDTranslator(HTMLTranslator):
         if hash_digest not in hash_list:
             match = hasher.compare_hash(hash_obj, hash_list)
             if match:
-                builder.storage.update_node(old_hash=match, new_hash=hasher.hash_node(node), commit='foobar')
+                resp = builder.storage.update_node(old_hash=match, new_hash=hasher.hash_node(node), commit='foobar')
             else:
-                builder.storage.add_node(id=hasher.hash_node(node),
-                                         document=builder.current_docname,
-                                         source=node.rawsource or node.astext())
+                resp = builder.storage.add_node(id=hasher.hash_node(node),
+                                                document=builder.current_docname,
+                                                source=node.rawsource or node.astext())
+
+        return resp

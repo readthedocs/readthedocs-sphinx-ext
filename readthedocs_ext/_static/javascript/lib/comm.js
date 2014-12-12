@@ -1,6 +1,7 @@
 module.exports = {
   initMetaData: initMetaData,
   addComment: addComment,
+  attachComment: attachComment,
   initOptions: initOptions
 }
 
@@ -31,7 +32,7 @@ function initOptions() {
     settings.opts = jQuery.extend(settings.opts, data);
    },
    error: function(request, textStatus, error) {
-     showError('Oops, there was a problem retrieving the comment options.');
+     display.showError('Oops, there was a problem retrieving the comment options.');
    },
   });
 }
@@ -53,7 +54,7 @@ function initMetaData() {
       displayCommentIcon()
    },
    error: function(request, textStatus, error) {
-     showError('Oops, there was a problem retrieving comment metadata.');
+     display.showError('Oops, there was a problem retrieving comment metadata.');
    },
   });
 }
@@ -105,7 +106,7 @@ function addComment(form) {
   var text = form.find('textarea[name="comment"]').val();
 
   if (text == '') {
-    showError('Please enter a comment.');
+    display.showError('Please enter a comment.');
     return;
   }
 
@@ -139,7 +140,43 @@ function addComment(form) {
     },
     error: function(request, textStatus, error) {
       form.find('textarea,input').removeAttr('disabled');
-      showError('Oops, there was a problem adding the comment.');
+      display.showError('Oops, there was a problem adding the comment.');
+    }
+  });
+}
+
+
+function attachComment(form) {
+  var node_id = form.find('input[name="node"]').val();
+  var comment_id = form.find('input[name="comment"]').val();
+
+  var server_data = getServerData();
+  var comment_data = {
+      node: node_id,
+      comment: comment_id
+    };
+  var post_data = $.extend(server_data, comment_data)
+
+
+  // Send the comment to the server.
+  $.ajax({
+    type: "POST",
+    url: settings.opts.attachCommentURL,
+    dataType: 'json',
+    data: post_data,
+    success: function(data, textStatus, error) {
+      form.find('textarea')
+        .val('')
+        .add(form.find('input'))
+        .removeAttr('disabled');
+      display.showOneCommet($(".comment-list"), data)
+      var comment_element = $('#' + node_id);
+      comment_element.find('img').attr({'src': settings.opts.commentBrightImage});
+      comment_element.find('a').removeClass('nocomment');
+    },
+    error: function(request, textStatus, error) {
+      form.find('textarea,input').removeAttr('disabled');
+      display.showError('Oops, there was a problem adding the comment.');
     }
   });
 }

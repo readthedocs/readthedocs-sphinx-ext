@@ -18,7 +18,7 @@ MEDIA_MAPPING = {
 
 STATIC_FILES = [
     'websupport2.css',
-    'websupport2-bundle.js_t',
+    #'websupport2-bundle.js_t',
     'sphinxweb.css',
     'jquery.pageslide.css',
     'jquery.pageslide.js',
@@ -96,17 +96,12 @@ def finalize_media(builder, local=False):
 
 def finalize_comment_media(builder):
     # Pull project data from conf.py if it exists
-    context = builder.config.html_context
-    if 'current_version' in context:
-        builder.version = context['current_version']
-    if 'slug' in context:
-        builder.project = context['slug']
-
     builder.storage = backend.WebStorage(builder=builder)
 
     # add our custom bits
     builder.script_files.append('_static/jquery.pageslide.js')
-    builder.script_files.append('_static/websupport2-bundle.js')
+    #builder.script_files.append('_static/websupport2-bundle.js')
+    builder.script_files.append('%sjavascript/websupport2-bundle.js' % builder.config.html_context['MEDIA_URL'])
     builder.css_files.append('_static/websupport2.css')
     builder.css_files.append('_static/sphinxweb.css')
     builder.css_files.append('_static/jquery.pageslide.css')

@@ -20,10 +20,14 @@ class WebStorage(StorageBackend):
         print "Using Websupport URL: %s" % self.url
 
     def _add_server_data(self, data):
-        if hasattr(self.builder, 'version'):
-            data['version'] = self.builder.version
-        if hasattr(self.builder, 'project'):
-            data['project'] = self.builder.project
+        if 'current_version' in self.builder.config.html_context:
+            data['version'] = self.builder.config.html_context['current_version']
+        if 'slug' in self.builder.config.html_context:
+            data['project'] = self.builder.config.html_context['slug']
+        if self.builder.current_docname:
+            data['page'] = self.builder.current_docname
+        if 'commit' in self.builder.config.html_context:
+            data['commit'] = self.builder.config.html_context['commit']
 
     def get_comments(self, node):
         url = self.url + "/_get_comments"
@@ -69,7 +73,7 @@ class WebStorage(StorageBackend):
         headers = {'Content-type': 'application/json'}
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print "Adding node %s" % (r.status_code)
-        return True
+        return r
 
     def update_node(self, old_hash, new_hash, commit):
         url = self.url + "/_update_node"
@@ -82,4 +86,4 @@ class WebStorage(StorageBackend):
         headers = {'Content-type': 'application/json'}
         r = requests.post(url, data=json.dumps(data), headers=headers)
         print "Updating node %s" % (r.status_code)
-        return True
+        return r

@@ -64,6 +64,32 @@ function showComments(id, comment_data) {
   element.append("<div class='comment-div' id='current-comment-reply'>")
   $(".comment-div").append(reply)
   element.append("</div>")
+
+  element.append("<br><br><br>")
+  element.append("<hr>")
+  element.append("<br><br><br>")
+  element.append("<h1>Floating Comments</h1>")
+    element.append("<div class='floating-comment-list' id='floating-comment-list'>")
+    for (index in comment_data) {
+        obj = comment_data[index]
+        showOneCommet($(".floating-comment-list"), obj)
+        var attach = '\
+            <div class="attach-div" id="comment-attach-' + id + '>">\
+              <form class= "comment-attach-form" id="comment-attach-form' + id + '">\
+                <input type="submit" value="Attach" />\
+                <input type="hidden" name="node" value="' + id + '" />\
+                <input type="hidden" name="comment" value="' + obj['pk'] + '" />\
+              </form>\
+            </div>'
+
+    }
+  element.append("<div class='floating-comment-div' id='floating-comment-reply'>")
+  $(".floating-comment-div").append(attach)
+  element.append("</div>")
+
+    element.append("</div>")
+  element.append("</div>")
+
   $.pageslide({direction: 'left', href:'#current-comment' })
 }
 
@@ -76,6 +102,16 @@ function showOneCommet(element, comment) {
       to_append += "</span>"
       element.append(to_append)
 }
+
+  function showError(message) {
+    $(document.createElement('div')).attr({'class': 'popup-error'})
+      .append($(document.createElement('div'))
+               .attr({'class': 'error-message'}).text(message))
+      .appendTo('body')
+      .fadeIn("slow")
+      .delay(2000)
+      .fadeOut("slow");
+  }
 
 // Don't need this since its in the page.
 

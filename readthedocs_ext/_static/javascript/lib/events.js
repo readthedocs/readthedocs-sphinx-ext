@@ -18,5 +18,10 @@ function initEvents() {
 		event.preventDefault();
 		comm.addComment($(this));
 	})
+
+	$(document).on("submit", ".comment-attach-form", function(event) {
+		event.preventDefault();
+		comm.attachComment($(this));
+	})
 }
 

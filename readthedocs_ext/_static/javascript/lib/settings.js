@@ -1,12 +1,19 @@
 var baseURL = "{{ websupport2_base_url }}";
 var staticURL = "{{ websupport2_static_url }}";
 
+// Template rendering failed
+if (baseURL.lastIndexOf("{{", 0) === 0) {
+  var baseURL = "http://localhost:8000/websupport";
+  var staticURL = "http://localhost:8000/static";
+}
+
 var metadata = {}
 
 var opts = {
   // Dynamic Content
   processVoteURL: baseURL + '/_process_vote',
   addCommentURL: baseURL + '/_add_comment',
+  attachCommentURL: baseURL + '/_attach_comment',
   getCommentsURL: baseURL + '/_get_comments',
   acceptCommentURL: baseURL + '/_accept_comment',
   deleteCommentURL: baseURL + '/_delete_comment',
