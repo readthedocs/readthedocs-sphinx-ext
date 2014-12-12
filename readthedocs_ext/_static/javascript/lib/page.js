@@ -2,7 +2,8 @@
 module.exports = {
 	project: READTHEDOCS_DATA['project'],
 	version: READTHEDOCS_DATA['version'],
-	page: getPageName()
+	page: getPageName(),
+	commit: getCommit()
 }
 
 function getPageName() {
@@ -13,5 +14,13 @@ function getPageName() {
 	  stripped = stripped.replace(".html", "")
 	  stripped = stripped.replace(/\/$/, "")
 	  return stripped
+	}
+}
+
+function getCommit() {
+	if ('comment' in READTHEDOCS_DATA) {
+	  return READTHEDOCS_DATA['comment']
+	} else {
+		return "unknown-commit"
 	}
 }

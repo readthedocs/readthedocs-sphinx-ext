@@ -16,6 +16,7 @@ module.exports = {
   initMetaData: initMetaData,
   addComment: addComment,
   attachComment: attachComment,
+  getServerData: getServerData,
   initOptions: initOptions
 }
 
@@ -27,7 +28,8 @@ function getServerData(format) {
   return {
     "project": page.project,
     "version":  page.version,
-    "page": page.page
+    "page": page.page,
+    "commit": page.commit
   }
 }
 
@@ -205,6 +207,8 @@ module.exports = {
     closeComments: closeComments
 }
 
+comm = require('./comm')
+
 function initDisplay() {
     $('body').append("<div id='current-comment'></div>");
     $('body').append("<div id='pageslide'></div>");
@@ -215,14 +219,16 @@ function closeComments() {
 }
 
 function displayComments(id) {
+  server_data = comm.getServerData()
   get_data = {
     'node': id
   }
+  var post_data = $.extend(get_data, server_data)
 
   $.ajax({
    type: 'GET',
    url: settings.opts.getCommentsURL,
-   data: get_data,
+   data: post_data,
    crossDomain: true,
    xhrFields: {
      withCredentials: true,
@@ -334,7 +340,7 @@ function setUpPageslide() {
     });
 }
 */
-},{}],4:[function(require,module,exports){
+},{"./comm":2}],4:[function(require,module,exports){
 module.exports = {
 	initEvents: initEvents
 }
@@ -368,7 +374,8 @@ function initEvents() {
 module.exports = {
 	project: READTHEDOCS_DATA['project'],
 	version: READTHEDOCS_DATA['version'],
-	page: getPageName()
+	page: getPageName(),
+	commit: getCommit()
 }
 
 function getPageName() {
@@ -379,6 +386,14 @@ function getPageName() {
 	  stripped = stripped.replace(".html", "")
 	  stripped = stripped.replace(/\/$/, "")
 	  return stripped
+	}
+}
+
+function getCommit() {
+	if ('comment' in READTHEDOCS_DATA) {
+	  return READTHEDOCS_DATA['comment']
+	} else {
+		return "unknown-commit"
 	}
 }
 

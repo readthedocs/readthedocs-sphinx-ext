@@ -5,6 +5,8 @@ module.exports = {
     closeComments: closeComments
 }
 
+comm = require('./comm')
+
 function initDisplay() {
     $('body').append("<div id='current-comment'></div>");
     $('body').append("<div id='pageslide'></div>");
@@ -15,14 +17,16 @@ function closeComments() {
 }
 
 function displayComments(id) {
+  server_data = comm.getServerData()
   get_data = {
     'node': id
   }
+  var post_data = $.extend(get_data, server_data)
 
   $.ajax({
    type: 'GET',
    url: settings.opts.getCommentsURL,
-   data: get_data,
+   data: post_data,
    crossDomain: true,
    xhrFields: {
      withCredentials: true,

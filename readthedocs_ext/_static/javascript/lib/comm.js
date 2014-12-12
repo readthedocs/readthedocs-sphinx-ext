@@ -2,6 +2,7 @@ module.exports = {
   initMetaData: initMetaData,
   addComment: addComment,
   attachComment: attachComment,
+  getServerData: getServerData,
   initOptions: initOptions
 }
 
@@ -13,7 +14,8 @@ function getServerData(format) {
   return {
     "project": page.project,
     "version":  page.version,
-    "page": page.page
+    "page": page.page,
+    "commit": page.commit
   }
 }
 

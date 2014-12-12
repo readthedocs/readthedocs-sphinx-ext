@@ -7,6 +7,7 @@ from sphinx.writers.html import HTMLTranslator
 import hasher
 
 # Between 128 and -128, the higher the number, the closer the strings are
+LENGTH_LIMIT = 30
 NILSIMSA_LIMIT = 70
 
 
@@ -23,6 +24,8 @@ def is_commentable(node):
         source = node.rawsource
 
     """
+    if len(node.astext()) < LENGTH_LIMIT:
+        return False
     if node.tagname in ['title']:
         return True
     if node.tagname in ['paragraph']:
@@ -70,7 +73,7 @@ class UUIDTranslator(HTMLTranslator):
         Take a node and compare it against existing hashes for this page.
         """
         hash_obj = hasher.hash_node(node, obj=True)
-        hash_digest = hash_obj.hexdigest()
+        hash_digest = hasher.hash_node(node)
         nodes = builder.storage.get_metadata(builder.current_docname)
         hash_list = nodes.keys()
         if hash_digest not in hash_list:
@@ -82,4 +85,5 @@ class UUIDTranslator(HTMLTranslator):
                                                 document=builder.current_docname,
                                                 source=node.rawsource or node.astext())
 
-        return resp
+            return resp
+        return None
