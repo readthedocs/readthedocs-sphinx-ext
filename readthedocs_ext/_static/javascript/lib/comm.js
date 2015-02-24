@@ -14,6 +14,7 @@ function getServerData(format) {
   return {
     "project": page.project,
     "version":  page.version,
+    "document_page": page.page,
     "page": page.page,
     "commit": page.commit
   }
