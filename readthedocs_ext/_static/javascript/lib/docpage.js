@@ -18,8 +18,8 @@ function getPageName() {
 }
 
 function getCommit() {
-	if ('comment' in READTHEDOCS_DATA) {
-	  return READTHEDOCS_DATA['comment']
+	if ('commit' in READTHEDOCS_DATA) {
+	  return READTHEDOCS_DATA['commit']
 	} else {
 		return "unknown-commit"
 	}

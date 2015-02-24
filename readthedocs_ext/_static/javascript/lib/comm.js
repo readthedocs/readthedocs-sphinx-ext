@@ -7,16 +7,16 @@ module.exports = {
 }
 
 settings = require('./settings')
-page = require('./page')
+docpage = require('./docpage')
 display = require('./display')
 
 function getServerData(format) {
   return {
-    "project": page.project,
-    "version":  page.version,
-    "document_page": page.page,
-    "page": page.page,
-    "commit": page.commit
+    "project": docpage.project,
+    "version":  docpage.version,
+    "document_page": docpage.page,
+    "page": docpage.page,
+    "commit": docpage.commit
   }
 }
 

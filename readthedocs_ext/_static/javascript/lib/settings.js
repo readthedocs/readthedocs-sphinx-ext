@@ -13,7 +13,7 @@ var metadata = {}
 var opts = {
   // Dynamic Content
   processVoteURL: baseURL + '/_process_vote',
-  addCommentURL: baseURL + '/_add_comment',
+  addCommentURL: rootURL + '/api/v2/comments/',
   attachCommentURL: baseURL + '/_attach_comment',
   getCommentsURL: rootURL + '/api/v2/comments/',
   acceptCommentURL: baseURL + '/_accept_comment',

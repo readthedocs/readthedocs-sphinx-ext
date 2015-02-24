@@ -22,6 +22,7 @@ function displayComments(id) {
     'node': id
   }
   var post_data = $.extend(get_data, server_data)
+  delete post_data['page']
 
   $.ajax({
    type: 'GET',
