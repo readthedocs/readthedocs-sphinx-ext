@@ -80,10 +80,10 @@ class UUIDTranslator(HTMLTranslator):
             match = hasher.compare_hash(hash_obj, hash_list)
             if match:
                 resp = builder.storage.update_node(old_hash=match, new_hash=hasher.hash_node(node), commit='foobar')
-            else:
-                resp = builder.storage.add_node(id=hasher.hash_node(node),
-                                                document=builder.current_docname,
-                                                source=node.rawsource or node.astext())
+            # else:
+            #     resp = builder.storage.add_node(id=hasher.hash_node(node),
+            #                                     document=builder.current_docname,
+            #                                     source=node.rawsource or node.astext())
 
             return resp
         return None
