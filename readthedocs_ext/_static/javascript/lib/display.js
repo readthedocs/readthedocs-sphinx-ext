@@ -45,7 +45,7 @@ function displayComments(id) {
 
 
 function handleComments(id, data) {
-    showComments(id, data.comments)
+    showComments(id, data.results)
 }
 
 
