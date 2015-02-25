@@ -41,90 +41,6 @@ def is_commentable(node):
 
     return False
 
-kong_comments = """
-{
-    "count": 2, 
-    "next": null, 
-    "previous": null, 
-    "results": [
-        {
-            "date": "2015-02-24T19:03:53.992703", 
-            "user": 1, 
-            "text": "simple comment", 
-            "node": {
-                "id": 619, 
-                "version": {
-                    "id": 104, 
-                    "project": {
-                        "id": 2, 
-                        "name": "Kong", 
-                        "slug": "woot-kong", 
-                        "description": "", 
-                        "language": "en", 
-                        "repo": "http://github.com/ericholscher/django-kong", 
-                        "repo_type": "git", 
-                        "default_version": "latest", 
-                        "default_branch": null, 
-                        "documentation_type": "sphinx", 
-                        "users": [
-                            1
-                        ]
-                    }, 
-                    "slug": "latest", 
-                    "identifier": "master", 
-                    "verbose_name": "latest", 
-                    "active": true, 
-                    "built": true, 
-                    "downloads": "{'htmlzip': '//localhost:8000/projects/woot-kong/downloads/htmlzip/latest/', 'epub': '//localhost:8000/projects/woot-kong/downloads/epub/latest/'}"
-                }, 
-                "current_hash": "nil-45fcb0188968b1be015a13a44508377b140a1639d872fcc7ee09639e7eb5eb71", 
-                "last_commit": "fac9e2868d8fe86c2e7fcc3d4f02a43fe015f9b3", 
-                "snapshots_count": "1", 
-                "page": "index", 
-                "project": 2
-            }
-        }, 
-        {
-            "date": "2015-02-24T19:04:00.174457", 
-            "user": 1, 
-            "text": "Another coment", 
-            "node": {
-                "id": 620, 
-                "version": {
-                    "id": 104, 
-                    "project": {
-                        "id": 2, 
-                        "name": "Kong", 
-                        "slug": "woot-kong", 
-                        "description": "", 
-                        "language": "en", 
-                        "repo": "http://github.com/ericholscher/django-kong", 
-                        "repo_type": "git", 
-                        "default_version": "latest", 
-                        "default_branch": null, 
-                        "documentation_type": "sphinx", 
-                        "users": [
-                            1
-                        ]
-                    }, 
-                    "slug": "latest", 
-                    "identifier": "master", 
-                    "verbose_name": "latest", 
-                    "active": true, 
-                    "built": true, 
-                    "downloads": "{'htmlzip': '//localhost:8000/projects/woot-kong/downloads/htmlzip/latest/', 'epub': '//localhost:8000/projects/woot-kong/downloads/epub/latest/'}"
-                }, 
-                "current_hash": "nil-1a8ea4600ed6309a4a13a8b18380606b81485927d07247544270cecaec34c509", 
-                "last_commit": "fac9e2868d8fe86c2e7fcc3d4f02a43fe015f9b3", 
-                "snapshots_count": "1", 
-                "page": "index", 
-                "project": 2
-            }
-        }
-    ]
-}
-"""
-
 class UUIDTranslator(HTMLTranslator):
 
     """
@@ -135,7 +51,7 @@ class UUIDTranslator(HTMLTranslator):
     def __init__(self, builder, *args, **kwargs):
         HTMLTranslator.__init__(self, builder, *args, **kwargs)
         self.comment_class = 'sphinx-has-comment'
-        self.metadata = json.loads(kong_comments)['results']
+        self.metadata = builder.storage.get_project_metadata(builder.config.html_context['slug'])['results']
 
     def dispatch_visit(self, node):
         if is_commentable(node):

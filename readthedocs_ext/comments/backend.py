@@ -40,6 +40,15 @@ class WebStorage(StorageBackend):
         else:
             return False
 
+    def get_project_metadata(self, project):
+        url = self.url.replace('/websupport', '') + "/api/v2/comments/"
+        data = {'project': project}
+        r = requests.get(url, params=data)
+        if r.status_code is 200:
+            return r.json()
+        else:
+            return False
+
     def get_metadata(self, page):
         url = self.url + "/_get_metadata"
         data = {'page': page}
