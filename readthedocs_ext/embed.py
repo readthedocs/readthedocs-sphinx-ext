@@ -44,10 +44,13 @@ class EmbedDirective(Directive):
         doc = self.options.get('doc', env.config.readthedocs_embed_doc)
         section = self.options.get('section')
         if not (project and version and doc and section):
-            return [self.state.document.reporter.error('readthedocs-embed requires project, version, doc, and section', line=self.lineno)]
+            return [self.state.document.reporter.error('[readthedocs-embed] Requires project, version, doc, and section', line=self.lineno)]
 
-        inline_content = get_inline_html(api_host, project, version, doc, section)
-        node = readthedocsembed('', inline_content, format='html')
+        try:
+            inline_content = get_inline_html(api_host, project, version, doc, section)
+            node = readthedocsembed('', inline_content, format='html')
+        except Exception, e:
+            return [self.state.document.reporter.error('[readthedocs-embed] Fetching embed HTML failed: %s' % e.msg, line=self.lineno)]
         return [node]
 
 
