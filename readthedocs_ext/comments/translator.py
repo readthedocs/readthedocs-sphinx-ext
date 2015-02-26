@@ -29,7 +29,7 @@ def is_commentable(node):
     if len(node.astext()) < LENGTH_LIMIT:
         return False
     if node.tagname in ['title']:
-        return True
+        return False
     if node.tagname in ['paragraph']:
         # More info
         # http://www.slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions Slide 75
