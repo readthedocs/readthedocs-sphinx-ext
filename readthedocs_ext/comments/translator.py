@@ -74,11 +74,11 @@ class UUIDTranslator(HTMLTranslator):
         node.attributes['ids'] = ['%s' % hash_digest]
         node.attributes['classes'].append(self.comment_class)
 
-        for obj in self.metadata:
-            if obj['node']['current_hash'] == hash_digest:
-                print "ADDING COMMEWNT"
-                comment = "[COMMENT] %s: %s" % (obj['user'], obj['text'])
-                node.insert(-1, nodes.paragraph(comment, comment))
+        # for obj in self.metadata:
+        #     if obj['node']['current_hash'] == hash_digest:
+        #         print "ADDING COMMEWNT"
+        #         comment = "[COMMENT] %s: %s" % (obj['user'], obj['text'])
+        #         node.insert(-1, nodes.paragraph(comment, comment))
 
     def update_hash(self, node, builder):
         """

@@ -107,6 +107,12 @@ def finalize_comment_media(builder):
     builder.css_files.append('_static/jquery.pageslide.css')
 
 
+# def add_comments_to_doctree(app, env):
+    
+#     for node in doctree.traverse():
+#         if translator.is_commentable(node):
+#             print node.attributes['ids']
+
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
     """
@@ -193,6 +199,7 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('build-finished', copy_media)
+    #app.connect('env-updated', add_comments_to_doctree)
     # Comments
     app.add_config_value('websupport2_base_url', 'http://localhost:8000/websupport', 'html')
     app.add_config_value('websupport2_static_url', 'http://localhost:8000/static', 'html')
