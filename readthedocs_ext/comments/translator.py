@@ -42,21 +42,17 @@ def is_commentable(node):
 
     return False
 
+
 class UUIDTranslator(HTMLTranslator):
 
     """
     Our custom HTML translator.
 
     """
-    page_hash_mapping = defaultdict(list)
-    metadata_mapping = defaultdict(list)
 
     def __init__(self, builder, *args, **kwargs):
         HTMLTranslator.__init__(self, builder, *args, **kwargs)
         self.comment_class = 'sphinx-has-comment'
-        self.metadata = builder.storage.get_project_metadata(builder.config.html_context['slug'])['results']
-        for obj in self.metadata:
-            self.metadata_mapping[obj['node']['page']].append(obj['node'])
 
     def dispatch_visit(self, node):
         if is_commentable(node):
@@ -74,7 +70,7 @@ class UUIDTranslator(HTMLTranslator):
         node.attributes['ids'] = ['%s' % hash_digest]
         node.attributes['classes'].append(self.comment_class)
 
-        # for obj in self.metadata:
+        # for obj in self.builder.comment_metadata:
         #     if obj['node']['current_hash'] == hash_digest:
         #         print "ADDING COMMEWNT"
         #         comment = "[COMMENT] %s: %s" % (obj['user'], obj['text'])
@@ -86,8 +82,8 @@ class UUIDTranslator(HTMLTranslator):
         """
         hash_obj = hasher.hash_node(node, obj=True)
         hash_digest = hasher.hash_node(node)
-        self.page_hash_mapping[builder.current_docname].append(hash_digest)
-        hash_list = [obj['current_hash'] for obj in self.metadata_mapping[builder.current_docname]]
+        builder.page_hash_mapping[builder.current_docname].append(hash_digest)
+        hash_list = [obj['current_hash'] for obj in builder.metadata_mapping[builder.current_docname]]
         if hash_digest not in hash_list:
             match = hasher.compare_hash(hash_obj, hash_list)
             if match:

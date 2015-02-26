@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+from collections import defaultdict
 
 from docutils.io import StringOutput
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
@@ -97,6 +98,14 @@ def finalize_media(builder, local=False):
 def finalize_comment_media(builder):
     # Pull project data from conf.py if it exists
     builder.storage = backend.WebStorage(builder=builder)
+    builder.page_hash_mapping = defaultdict(list)
+    builder.metadata_mapping = defaultdict(list)
+    try:
+        builder.comment_metadata = builder.storage.get_project_metadata(builder.config.html_context['slug'])['results']
+        for obj in builder.comment_metadata:
+            builder.metadata_mapping[obj['node']['page']].append(obj['node'])
+    except:
+        builder.comment_metadata = {}
 
     # add our custom bits
     builder.script_files.append('_static/jquery.pageslide.js')
