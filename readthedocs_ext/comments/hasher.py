@@ -33,13 +33,13 @@ def compare_hash(hash_obj, hash_list, limit=NILSIMSA_LIMIT, allow_multiple=True)
         if difference > limit:
             # Node is the same
             top[difference] = node_hash
-            print "CLOSE: %s %s" % (nim_hash, difference)
+            print "[Commenting] Close hash found: %s %s" % (nim_hash, difference)
         else:
-            print "Nope: %s %s" % (nim_hash, difference)
+            pass
     if len(top) > 2:
         if allow_multiple:
-            print 'Multiple nodes match. Returning top node, but it might be wrong!'
+            print '[Commenting] Multiple nodes match. Returning top node, but it might be wrong!'
         else:
-            raise IndexError('Multiple nodes match. Perhaps raise your limit?')
+            raise IndexError('[Commenting] Multiple nodes match. Perhaps raise your limit?')
     top_diff = sorted(top)[-1]
     return top[top_diff]
