@@ -2,13 +2,12 @@
 import os
 from collections import defaultdict
 
-from docutils.io import StringOutput
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
 from sphinx.util import copy_static_entry
-from sphinx.util.osutil import relative_uri
 from sphinx.util.console import bold
 
 from .comments import backend, translator
+from .embed import EmbedDirective
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
@@ -16,10 +15,9 @@ MEDIA_MAPPING = {
     "_static/doctools.js": "%sjavascript/doctools.js",
 }
 
-
 STATIC_FILES = [
     'websupport2.css',
-    #'websupport2-bundle.js_t',
+    # 'websupport2-bundle.js_t',
     'sphinxweb.css',
     'jquery.pageslide.css',
     'jquery.pageslide.js',
@@ -109,7 +107,7 @@ def finalize_comment_media(builder):
 
     # add our custom bits
     builder.script_files.append('_static/jquery.pageslide.js')
-    #builder.script_files.append('_static/websupport2-bundle.js')
+    # builder.script_files.append('_static/websupport2-bundle.js')
     builder.script_files.append('%sjavascript/websupport2-bundle.js' % builder.config.html_context['MEDIA_URL'])
     builder.css_files.append('_static/websupport2.css')
     builder.css_files.append('_static/sphinxweb.css')
@@ -117,7 +115,7 @@ def finalize_comment_media(builder):
 
 
 # def add_comments_to_doctree(app, env):
-    
+
 #     for node in doctree.traverse():
 #         if translator.is_commentable(node):
 #             print node.attributes['ids']
@@ -135,6 +133,7 @@ class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
 
 class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
+
     """
     Comment Builders.
 
@@ -207,13 +206,22 @@ class ReadtheDocsSingleFileHTMLBuilderLocalMedia(SingleFileHTMLBuilder):
 
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
-    app.add_builder(ReadtheDocsBuilderComments)
     app.add_builder(ReadtheDocsDirectoryHTMLBuilder)
-    app.add_builder(ReadtheDocsDirectoryHTMLBuilderComments)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('build-finished', copy_media)
-    #app.connect('env-updated', add_comments_to_doctree)
+
     # Comments
+    # app.connect('env-updated', add_comments_to_doctree)
+    app.add_builder(ReadtheDocsBuilderComments)
+    app.add_builder(ReadtheDocsDirectoryHTMLBuilderComments)
     app.add_config_value('websupport2_base_url', 'http://localhost:8000/websupport', 'html')
     app.add_config_value('websupport2_static_url', 'http://localhost:8000/static', 'html')
+
+    # Embed
+    app.add_directive('readthedocs-embed', EmbedDirective)
+    app.add_config_value('readthedocs_embed_project', '', 'html')
+    app.add_config_value('readthedocs_embed_version', '', 'html')
+    app.add_config_value('readthedocs_embed_doc', '', 'html')
+
+    return app
