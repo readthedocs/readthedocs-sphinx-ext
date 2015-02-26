@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from collections import defaultdict
-import json
-
-from docutils import nodes
 from sphinx.writers.html import HTMLTranslator
 
 import hasher
@@ -17,6 +13,8 @@ def is_commentable(node):
     """
     Determine if a node is commentable.
 
+    Only set large text nodes for now.
+
     Node shortcuts::
 
         index = node.parent.index(node)
@@ -26,10 +24,17 @@ def is_commentable(node):
         source = node.rawsource
 
     """
-    if len(node.astext()) < LENGTH_LIMIT:
+    try:
+        text = node.astext()
+    except Exception, e:
+        print '[Commenting] As Text Error: %s' % e
+        return False
+    if len(text) < LENGTH_LIMIT:
         return False
     if node.tagname in ['title']:
         return False
+    if node.tagname in ['literal_block']:
+        return True
     if node.tagname in ['paragraph']:
         # More info
         # http://www.slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions Slide 75
@@ -55,8 +60,13 @@ class UUIDTranslator(HTMLTranslator):
         self.comment_class = 'sphinx-has-comment'
 
     def dispatch_visit(self, node):
-        if is_commentable(node):
-            self.handle_visit_commentable(node)
+        # Be super defensive at the top-level so we don't break builds
+        try:
+            if is_commentable(node):
+                self.handle_visit_commentable(node)
+        except Exception, e:
+            print '[Commenting] Visit Error: %s' % e
+
         HTMLTranslator.dispatch_visit(self, node)
 
     def handle_visit_commentable(self, node):
