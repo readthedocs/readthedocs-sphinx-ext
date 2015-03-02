@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from docutils import nodes
 from docutils.parsers.rst import Directive
 
