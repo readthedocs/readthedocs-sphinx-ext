@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import json
 import requests
 
@@ -17,7 +19,7 @@ class WebStorage(StorageBackend):
     def __init__(self, builder=None):
         self.builder = builder
         self.url = self.builder.config.websupport2_base_url
-        print "Using Websupport URL: %s" % self.url
+        print("Using Websupport URL: %s" % self.url)
 
     def _add_server_data(self, data):
         if 'current_version' in self.builder.config.html_context:
@@ -34,7 +36,7 @@ class WebStorage(StorageBackend):
         data = {'node': node}
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        #print "Getting comments %s" % (r.status_code)
+        #print("Getting comments %s" % (r.status_code))
         if r.status_code is 200:
             return r.json()
         else:
@@ -54,7 +56,7 @@ class WebStorage(StorageBackend):
         data = {'page': page}
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        #print "Getting metadata %s" % (r.status_code)
+        #print("Getting metadata %s" % (r.status_code))
         if r.status_code is 200:
             return r.json()
         else:
@@ -65,7 +67,7 @@ class WebStorage(StorageBackend):
         data = {'node_id': id, }
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        #print "Checking node %s" % (r.status_code)
+        #print("Checking node %s" % (r.status_code))
         if r.status_code is 200:
             return r.json()['exists']
         else:
@@ -81,7 +83,7 @@ class WebStorage(StorageBackend):
         self._add_server_data(data)
         headers = {'Content-type': 'application/json'}
         r = requests.post(url, data=json.dumps(data), headers=headers)
-        print "Adding node %s" % (r.status_code)
+        print("Adding node %s" % (r.status_code))
         return r
 
     def update_node(self, old_hash, new_hash, commit):
@@ -94,5 +96,5 @@ class WebStorage(StorageBackend):
         self._add_server_data(data)
         headers = {'Content-type': 'application/json'}
         r = requests.post(url, data=json.dumps(data), headers=headers)
-        print "Updating node %s" % (r.status_code)
+        print("Updating node %s" % (r.status_code))
         return r
