@@ -28,7 +28,7 @@ def is_commentable(node):
     """
     try:
         text = node.astext()
-    except Exception, e:
+    except Exception as e:
         print('[Commenting] As Text Error: %s' % e)
         return False
     if len(text) < LENGTH_LIMIT:
@@ -66,7 +66,7 @@ class UUIDTranslator(HTMLTranslator):
         try:
             if is_commentable(node):
                 self.handle_visit_commentable(node)
-        except Exception, e:
+        except Exception as e:
             print('[Commenting] Visit Error: %s' % e)
 
         HTMLTranslator.dispatch_visit(self, node)
