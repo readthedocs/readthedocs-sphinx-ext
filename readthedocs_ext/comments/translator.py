@@ -9,7 +9,7 @@ LENGTH_LIMIT = 30
 NILSIMSA_LIMIT = 70
 
 
-def is_commentable(node):
+def is_commentable(node, page_config):
     """
     Determine if a node is commentable.
 
@@ -24,6 +24,8 @@ def is_commentable(node):
         source = node.rawsource
 
     """
+    if 'none' in page_config:
+        return False
     try:
         text = node.astext()
     except Exception, e:
@@ -32,9 +34,9 @@ def is_commentable(node):
     if len(text) < LENGTH_LIMIT:
         return False
     if node.tagname in ['title']:
-        return False
+        return 'header' in page_config
     if node.tagname in ['literal_block']:
-        return True
+        return 'code' in page_config
     if node.tagname in ['paragraph']:
         # More info
         # http://www.slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions Slide 75
@@ -43,7 +45,7 @@ def is_commentable(node):
             if node.parent.parent.parent.tagname == 'tbody':
                 # Don't comment table contents
                 return False
-        return True
+        return 'paragraph' in page_config
 
     return False
 
@@ -62,7 +64,14 @@ class UUIDTranslator(HTMLTranslator):
     def dispatch_visit(self, node):
         # Be super defensive at the top-level so we don't break builds
         try:
-            if is_commentable(node):
+            if hasattr(self.builder.env, 'comment_config_map'):
+                config_map = self.builder.env.comment_config_map
+                page_config = config_map.get(self.builder.current_docname, [])
+                if page_config:
+                    print 'CONFIG %s' % page_config
+            else:
+                page_config = {'header'}
+            if is_commentable(node, page_config):
                 self.handle_visit_commentable(node)
         except Exception, e:
             print '[Commenting] Visit Error: %s' % e
