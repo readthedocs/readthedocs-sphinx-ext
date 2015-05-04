@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from docutils import nodes
 from docutils.parsers.rst import Directive
 
@@ -49,7 +51,7 @@ class EmbedDirective(Directive):
         try:
             inline_content = get_inline_html(api_host, project, version, doc, section)
             node = readthedocsembed('', inline_content, format='html')
-        except Exception, e:
+        except Exception as e:
             return [self.state.document.reporter.error('[readthedocs-embed] Fetching embed HTML failed: %s' % e.msg, line=self.lineno)]
         return [node]
 

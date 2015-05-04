@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
+
 import os
 from collections import defaultdict
 
@@ -124,7 +126,7 @@ def finalize_comment_media(builder):
 
 #     for node in doctree.traverse():
 #         if translator.is_commentable(node):
-#             print node.attributes['ids']
+#             print(node.attributes['ids'])
 
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 

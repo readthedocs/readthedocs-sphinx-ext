@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
+
 from sphinx.writers.html import HTMLTranslator
 
 import hasher
@@ -28,8 +30,8 @@ def is_commentable(node, page_config):
         return False
     try:
         text = node.astext()
-    except Exception, e:
-        print '[Commenting] As Text Error: %s' % e
+    except Exception as e:
+        print('[Commenting] As Text Error: %s' % e)
         return False
     if len(text) < LENGTH_LIMIT:
         return False
@@ -73,8 +75,8 @@ class UUIDTranslator(HTMLTranslator):
                 page_config = {'header'}
             if is_commentable(node, page_config):
                 self.handle_visit_commentable(node)
-        except Exception, e:
-            print '[Commenting] Visit Error: %s' % e
+        except Exception as e:
+            print('[Commenting] Visit Error: %s' % e)
 
         HTMLTranslator.dispatch_visit(self, node)
 
@@ -91,7 +93,7 @@ class UUIDTranslator(HTMLTranslator):
 
         # for obj in self.builder.comment_metadata:
         #     if obj['node']['current_hash'] == hash_digest:
-        #         print "ADDING COMMEWNT"
+        #         print("ADDING COMMEWNT")
         #         comment = "[COMMENT] %s: %s" % (obj['user'], obj['text'])
         #         node.insert(-1, nodes.paragraph(comment, comment))
 
