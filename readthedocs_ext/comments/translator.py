@@ -69,8 +69,6 @@ class UUIDTranslator(HTMLTranslator):
             if hasattr(self.builder.env, 'comment_config_map'):
                 config_map = self.builder.env.comment_config_map
                 page_config = config_map.get(self.builder.current_docname, [])
-                if page_config:
-                    print 'CONFIG %s' % page_config
             else:
                 page_config = {'header'}
             if is_commentable(node, page_config):
