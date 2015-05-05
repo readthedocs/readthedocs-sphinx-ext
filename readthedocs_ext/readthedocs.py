@@ -368,3 +368,5 @@ def setup(app):
     app.add_config_value('readthedocs_embed_project', '', 'html')
     app.add_config_value('readthedocs_embed_version', '', 'html')
     app.add_config_value('readthedocs_embed_doc', '', 'html')
+
+    return {}
