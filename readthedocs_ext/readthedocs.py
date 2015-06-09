@@ -79,14 +79,14 @@ def finalize_media(builder, local=False):
 
     if local:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-            builder.css_files.append('_static/css/theme.css')
+            builder.css_files.insert(0, '_static/css/theme.css')
         else:
-            builder.css_files.append('_static/css/badge_only.css')
+            builder.css_files.insert(0, '_static/css/badge_only.css')
     else:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-            builder.css_files.append('%scss/sphinx_rtd_theme.css' % MEDIA_URL)
+            builder.css_files.insert(0, '%scss/sphinx_rtd_theme.css' % MEDIA_URL)
         else:
-            builder.css_files.append('%scss/badge_only.css' % MEDIA_URL)
+            builder.css_files.insert(0, '%scss/badge_only.css' % MEDIA_URL)
 
     # Analytics codes
     # builder.script_files.append('_static/readthedocs-data.js')
