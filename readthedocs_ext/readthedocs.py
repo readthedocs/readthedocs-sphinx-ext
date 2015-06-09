@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
-
 import os
 from collections import defaultdict
-
-from docutils import nodes
 
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
 from sphinx.util import copy_static_entry
@@ -20,8 +16,6 @@ MEDIA_MAPPING = {
 }
 
 STATIC_FILES = [
-    'websupport2.css',
-    # 'websupport2-bundle.js_t',
     'sphinxweb.css',
     'jquery.pageslide.css',
     'jquery.pageslide.js',
@@ -84,7 +78,8 @@ def finalize_media(builder, local=False):
             builder.css_files.insert(0, '_static/css/badge_only.css')
     else:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-            builder.css_files.insert(0, '%scss/sphinx_rtd_theme.css' % MEDIA_URL)
+            builder.css_files.insert(
+                0, '%scss/sphinx_rtd_theme.css' % MEDIA_URL)
         else:
             builder.css_files.insert(0, '%scss/badge_only.css' % MEDIA_URL)
 
@@ -125,12 +120,6 @@ def finalize_comment_media(builder):
     builder.css_files.append('_static/sphinxweb.css')
     builder.css_files.append('_static/jquery.pageslide.css')
 
-
-# def add_comments_to_doctree(app, env):
-
-#     for node in doctree.traverse():
-#         if translator.is_commentable(node):
-#             print(node.attributes['ids'])
 
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
