@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from collections import defaultdict
 from docutils import nodes
 from docutils.parsers.rst import Directive
@@ -22,7 +24,7 @@ class CommentConfigurationDirective(Directive):
         if not hasattr(env, 'comment_config_map'):
             env.comment_config_map = defaultdict(set)
         for option in self.arguments:
-            print 'OPTION %s' % option
+            print('OPTION %s' % option)
             if option in ['none', 'header', 'paragraph', 'code']:
                 env.comment_config_map[docname].add(option)
             else:

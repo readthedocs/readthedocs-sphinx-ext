@@ -2,7 +2,7 @@ import codecs
 try:
     from setuptools import setup, find_packages
     extra_setup = dict(
-        install_requires=['requests', 'nilsimsa'],
+        install_requires=['requests', 'nilsimsa>=0.3.7'],
     )
 except ImportError:
     from distutils.core import setup
@@ -10,7 +10,7 @@ except ImportError:
 
 setup(
     name='readthedocs-sphinx-ext',
-    version='0.5.3',
+    version='0.5.4',
     author='Eric Holscher',
     author_email='eric@ericholscher.com',
     url='http://github.com/ericholscher/readthedocs-sphinx-ext',
