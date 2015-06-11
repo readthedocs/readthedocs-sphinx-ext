@@ -2,7 +2,7 @@ import codecs
 try:
     from setuptools import setup, find_packages
     extra_setup = dict(
-        install_requires=['requests', 'nilsimsa'],
+        install_requires=['requests'],
     )
 except ImportError:
     from distutils.core import setup
