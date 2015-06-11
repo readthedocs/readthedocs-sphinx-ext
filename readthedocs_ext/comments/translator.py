@@ -4,7 +4,7 @@ from __future__ import print_function
 
 from sphinx.writers.html import HTMLTranslator
 
-import hasher
+from . import hasher
 
 # Between 128 and -128, the higher the number, the closer the strings are
 LENGTH_LIMIT = 30
