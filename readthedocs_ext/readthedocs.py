@@ -6,7 +6,6 @@ from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, Si
 from sphinx.util import copy_static_entry
 from sphinx.util.console import bold
 
-from .comments import backend, translator, directive
 from .embed import EmbedDirective
 
 MEDIA_MAPPING = {
@@ -97,6 +96,7 @@ def finalize_media(builder, local=False):
 
 def finalize_comment_media(builder):
     # Pull project data from conf.py if it exists
+    from .comments import backend
     builder.storage = backend.WebStorage(builder=builder)
     builder.page_hash_mapping = defaultdict(list)
     builder.metadata_mapping = defaultdict(list)
@@ -149,6 +149,7 @@ class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
         finalize_comment_media(self)
 
     def init_translator_class(self):
+        from .comments import translator
         self.translator_class = translator.UUIDTranslator
 
 
@@ -178,6 +179,7 @@ class ReadtheDocsDirectoryHTMLBuilderComments(DirectoryHTMLBuilder):
         finalize_comment_media(self)
 
     def init_translator_class(self):
+        from .comments import translator
         self.translator_class = translator.UUIDTranslator
 
 
@@ -214,8 +216,7 @@ def setup(app):
 
     # Comments
     # app.connect('env-updated', add_comments_to_doctree)
-    app.add_directive(
-        'comment-configure', directive.CommentConfigurationDirective)
+    # app.add_directive('comment-configure', directive.CommentConfigurationDirective)
     app.add_builder(ReadtheDocsBuilderComments)
     app.add_builder(ReadtheDocsDirectoryHTMLBuilderComments)
     app.add_config_value(

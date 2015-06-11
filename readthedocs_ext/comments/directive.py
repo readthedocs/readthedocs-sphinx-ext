@@ -4,10 +4,8 @@ from docutils.parsers.rst import Directive
 
 
 class CommentConfigurationDirective(Directive):
-
     """
     Allow configuration of comments
-
     """
 
     has_content = False
