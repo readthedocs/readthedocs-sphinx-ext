@@ -205,12 +205,25 @@ class ReadtheDocsSingleFileHTMLBuilderLocalMedia(SingleFileHTMLBuilder):
         finalize_media(self, local=True)
 
 
+def update_body(app, pagename, templatename, context, doctree):
+    """
+    Add Read the Docs content to Sphinx body content.
+
+    This is the most reliable way to inject our content into the page.
+    """
+    if context and 'body' in context:
+        src = open('_static/readthedocs-insert.html.tmpl').read()
+        rtd_content = app.builder.templates.render_string(src, context)
+        context['body'] += rtd_content
+
+
 def setup(app):
     app.add_builder(ReadtheDocsBuilder)
     app.add_builder(ReadtheDocsDirectoryHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('build-finished', copy_media)
+    app.connect('html-page-context', update_body)
 
     # Comments
     # app.connect('env-updated', add_comments_to_doctree)
