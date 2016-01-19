@@ -90,8 +90,6 @@ def finalize_media(builder, local=False):
     # documentation without rebuilding every one.
     # If this script is embedded in each build,
     # then updating the file across all docs is basically impossible.
-    builder.script_files.append(
-        '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL)
     builder.css_files.append('%scss/readthedocs-doc-embed.css' % MEDIA_URL)
 
 
@@ -212,6 +210,9 @@ def update_body(app, pagename, templatename, context, doctree):
     This is the most reliable way to inject our content into the page.
     """
     if context and 'body' in context:
+        MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
+        template_context = context.copy()
+        template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
         src = open('_static/readthedocs-insert.html.tmpl').read()
         rtd_content = app.builder.templates.render_string(src, context)
         context['body'] += rtd_content
