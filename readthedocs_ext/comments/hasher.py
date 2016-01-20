@@ -12,11 +12,9 @@ def hash_node(node, obj=False):
     if obj:
         return nilsimsa.Nilsimsa(source)
 
-    #index = node.parent.index(node)
     try:
         ret = u'nil-{hash}'.format(hash=nilsimsa.Nilsimsa(source).hexdigest())
     except UnicodeEncodeError:
-        #ret = u'md5-%s' % str(hashlib.md5(source).hexdigest())
         ret = u'uuid-{hash}'.format(hash=str(uuid.uuid1()))
     return ret
 

@@ -41,7 +41,8 @@ def is_commentable(node, page_config):
         return 'code' in page_config
     if node.tagname in ['paragraph']:
         # More info
-        # http://www.slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions Slide 75
+        # slideshare.net/doughellmann/better-documentation-through-automation-creating-docutils-sphinx-extensions
+        # Slide 75
         # https://www.youtube.com/watch?v=8vwtgMkqE9o
         if node.parent and node.parent.parent and node.parent.parent.parent:
             if node.parent.parent.parent.tagname == 'tbody':
@@ -102,11 +103,15 @@ class UUIDTranslator(HTMLTranslator):
         hash_obj = hasher.hash_node(node, obj=True)
         hash_digest = hasher.hash_node(node)
         builder.page_hash_mapping[builder.current_docname].append(hash_digest)
-        hash_list = [obj['current_hash'] for obj in builder.metadata_mapping[builder.current_docname]]
+        hash_list = [
+            obj['current_hash'] for obj in builder.metadata_mapping[builder.current_docname]
+        ]
         if hash_digest not in hash_list:
             match = hasher.compare_hash(hash_obj, hash_list)
             if match:
-                builder.storage.update_node(old_hash=match, new_hash=hasher.hash_node(node), commit='foobar')
+                builder.storage.update_node(
+                    old_hash=match, new_hash=hasher.hash_node(node), commit='foobar'
+                )
                 return hash_digest
             # else:
             #     resp = builder.storage.add_node(id=hasher.hash_node(node),

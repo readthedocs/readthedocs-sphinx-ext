@@ -1,7 +1,6 @@
 from __future__ import print_function
 
 from collections import defaultdict
-from docutils import nodes
 from docutils.parsers.rst import Directive
 
 
@@ -28,5 +27,7 @@ class CommentConfigurationDirective(Directive):
             if option in ['none', 'header', 'paragraph', 'code']:
                 env.comment_config_map[docname].add(option)
             else:
-                return [self.state.document.reporter.warning('Invalid option for Comment Configuration: %s' % option, line=self.lineno)]
+                return [self.state.document.reporter.warning(
+                    'Invalid option for Comment Configuration: %s' % option, line=self.lineno
+                )]
         return []
