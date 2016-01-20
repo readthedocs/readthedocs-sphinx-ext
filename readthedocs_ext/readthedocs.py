@@ -85,9 +85,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
 
 def copy_media(app, exception):
-    """
-    Move our dynamically generated files after build.
-    """
+    """ Move our dynamically generated files after build. """
     if app.builder.name == 'readthedocs' and not exception:
         for file in ['readthedocs-dynamic-include.js_t', 'readthedocs-data.js_t']:
             app.info(bold('Copying %s... ' % file), nonl=True)
