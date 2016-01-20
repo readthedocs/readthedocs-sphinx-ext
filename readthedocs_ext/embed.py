@@ -8,7 +8,10 @@ import requests
 
 def get_inline_html(api_host, project, version, doc, section):
     url = '{api_host}/api/v2/embed/'.format(api_host=api_host)
-    resp = requests.get(url, params={'project': project, 'version': version, 'doc': doc, 'section': section})
+    resp = requests.get(
+        url,
+        params={'project': project, 'version': version, 'doc': doc, 'section': section}
+    )
     return resp.json()['wrapped'][0]
 
 
@@ -46,13 +49,17 @@ class EmbedDirective(Directive):
         doc = self.options.get('doc', env.config.readthedocs_embed_doc)
         section = self.options.get('section')
         if not (project and version and doc and section):
-            return [self.state.document.reporter.error('[readthedocs-embed] Requires project, version, doc, and section', line=self.lineno)]
+            return [self.state.document.reporter.error(
+                '[readthedocs-embed] Requires project, version, doc, and section',
+                line=self.lineno
+            )]
 
         try:
             inline_content = get_inline_html(api_host, project, version, doc, section)
             node = readthedocsembed('', inline_content, format='html')
         except Exception as e:
-            return [self.state.document.reporter.error('[readthedocs-embed] Fetching embed HTML failed: %s' % e.msg, line=self.lineno)]
+            return [self.state.document.reporter.error(
+                '[readthedocs-embed] Fetching embed HTML failed: %s' % e.msg, line=self.lineno)]
         return [node]
 
 
