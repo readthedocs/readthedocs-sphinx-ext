@@ -9,7 +9,7 @@ from . import backend, translator
 
 def finalize_comment_media(app):
 
-    if not 'comments' in app.builder.name:
+    if 'comments' not in app.builder.name:
         return
     builder = app.builder
     # Pull project data from conf.py if it exists
@@ -57,9 +57,7 @@ class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
 
 class ReadtheDocsDirectoryHTMLBuilderComments(DirectoryHTMLBuilder):
 
-    """
-    Adds specific media files to script_files and css_files.
-    """
+    """ Adds specific media files to script_files and css_files. """
     name = 'readthedocsdirhtml-comments'
     versioning_method = 'commentable'
 

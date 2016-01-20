@@ -25,9 +25,7 @@ STATIC_FILES = [
 
 
 def finalize_media(app):
-    """
-    Point media files at our media server.
-    """
+    """ Point media files at our media server. """
 
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         return  # Use local media for downloadable files
@@ -82,8 +80,8 @@ def update_body(app, pagename, templatename, context, doctree):
         # then updating the file across all docs is basically impossible.
         context['body'] += rtd_content
     else:
-        # Return template to render this content 
-
+        # TODO: Return template to render this content?
+        pass
 
 
 def copy_media(app, exception):
