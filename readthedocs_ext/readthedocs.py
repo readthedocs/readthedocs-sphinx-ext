@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import absolute_import
 import os
 
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
 from sphinx.util import copy_static_entry
 from sphinx.util.console import bold
 
-from .comments import builder as comment_builder, directive as comment_directive
+from .comments.builder import finalize_comment_media, ReadtheDocsBuilderComments, ReadtheDocsDirectoryHTMLBuilderComments
+from .comments.directive import CommentConfigurationDirective
 from .embed import EmbedDirective
 
 MEDIA_MAPPING = {
@@ -26,6 +29,8 @@ def finalize_media(app):
     Point media files at our media server.
     """
 
+    if app.builder.name == 'readthedocssinglehtmllocalmedia':
+        return  # Use local media for downloadable files
     # Pull project data from conf.py if it exists
     builder = app.builder
     context = builder.config.html_context
@@ -46,31 +51,39 @@ def update_body(app, pagename, templatename, context, doctree):
 
     This is the most reliable way to inject our content into the page.
     """
-    if context and 'body' in context:
-        MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
-
-        if app.builder.name == 'readthedocssinglehtmllocalmedia':
-            if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-                theme_css = '_static/css/theme.css'
-            else:
-                theme_css = '_static/css/badge_only.css'
+    MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
+    if app.builder.name == 'readthedocssinglehtmllocalmedia':
+        if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
+            theme_css = '_static/css/theme.css'
         else:
-            if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-                theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
-            else:
-                theme_css = '%scss/badge_only.css' % MEDIA_URL
+            theme_css = '_static/css/badge_only.css'
+    else:
+        if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
+            theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
+        else:
+            theme_css = '%scss/badge_only.css' % MEDIA_URL
+    template_context = context.copy()
+    template_context['theme_css'] = theme_css
+    template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
+    template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
+    source = os.path.join(
+        os.path.abspath(os.path.dirname(__file__)),
+        '_templates',
+        'readthedocs-insert.html.tmpl'
+    )
+    templ = open(source).read()
+    rtd_content = app.builder.templates.render_string(templ, template_context)
+
+    if context and 'body' in context:
 
         # We include the media servers version here so we can update rtd.js across all
         # documentation without rebuilding every one.
         # If this script is embedded in each build,
         # then updating the file across all docs is basically impossible.
-        template_context = context.copy()
-        template_context['theme_css'] = theme_css
-        template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
-        template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
-        src = open('_templates/readthedocs-insert.html.tmpl').read()
-        rtd_content = app.builder.templates.render_string(src, template_context)
         context['body'] += rtd_content
+    else:
+        # Return template to render this content 
+
 
 
 def copy_media(app, exception):
@@ -150,16 +163,16 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
-    app.connect('builder-inited', comment_builder.finalize_comment_media)
+    app.connect('builder-inited', finalize_comment_media)
     app.connect('html-page-context', update_body)
     app.connect('build-finished', copy_media)
 
     # Comments
     # app.connect('env-updated', add_comments_to_doctree)
     app.add_directive(
-        'comment-configure', comment_directive.CommentConfigurationDirective)
-    app.add_builder(comment_builder.ReadtheDocsBuilderComments)
-    app.add_builder(comment_builder.ReadtheDocsDirectoryHTMLBuilderComments)
+        'comment-configure', CommentConfigurationDirective)
+    app.add_builder(ReadtheDocsBuilderComments)
+    app.add_builder(ReadtheDocsDirectoryHTMLBuilderComments)
     app.add_config_value(
         'websupport2_base_url', 'http://localhost:8000/websupport', 'html')
     app.add_config_value(

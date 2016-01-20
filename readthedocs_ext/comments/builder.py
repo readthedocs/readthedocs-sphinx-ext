@@ -1,12 +1,16 @@
+from __future__ import absolute_import
+
 from collections import defaultdict
 
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder
 
-from .comments import backend, translator, directive
+from . import backend, translator
 
 
 def finalize_comment_media(app):
 
+    if not 'comments' in app.builder.name:
+        return
     builder = app.builder
     # Pull project data from conf.py if it exists
     builder.storage = backend.WebStorage(builder=builder)
