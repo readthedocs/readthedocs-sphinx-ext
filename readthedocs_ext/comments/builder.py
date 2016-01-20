@@ -42,7 +42,8 @@ class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
     """
     Comment Builders.
 
-    Sets the translator class, which handles adding a content-specific hash to each text node object.
+    Sets the translator class,
+    which handles adding a content-specific hash to each text node object.
     """
     name = 'readthedocs-comments'
     versioning_method = 'commentable'

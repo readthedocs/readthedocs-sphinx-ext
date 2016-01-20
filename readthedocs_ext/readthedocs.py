@@ -7,7 +7,8 @@ from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, Si
 from sphinx.util import copy_static_entry
 from sphinx.util.console import bold
 
-from .comments.builder import finalize_comment_media, ReadtheDocsBuilderComments, ReadtheDocsDirectoryHTMLBuilderComments
+from .comments.builder import (finalize_comment_media, ReadtheDocsBuilderComments,
+                               ReadtheDocsDirectoryHTMLBuilderComments)
 from .comments.directive import CommentConfigurationDirective
 from .embed import EmbedDirective
 
