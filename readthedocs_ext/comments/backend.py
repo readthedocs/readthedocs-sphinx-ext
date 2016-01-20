@@ -12,7 +12,8 @@ class WebStorage(StorageBackend):
     A storage class meant to be used by the Sphinx Builder to store nodes.
 
     This is super inefficient and a hack right now.
-    When in prod we'll store all nodes to be added and send them all up at once like with sync_versions.
+    When in prod we'll store all nodes to be added
+    and send them all up at once like with sync_versions.
 
     """
 
@@ -36,7 +37,6 @@ class WebStorage(StorageBackend):
         data = {'node': node}
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        #print("Getting comments %s" % (r.status_code))
         if r.status_code is 200:
             return r.json()
         else:
@@ -51,12 +51,11 @@ class WebStorage(StorageBackend):
         else:
             return False
 
-    def get_metadata(self, page):
+    def get_metadata(self, docname, moderator=None):
         url = self.url + "/_get_metadata"
-        data = {'page': page}
+        data = {'page': docname}
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        #print("Getting metadata %s" % (r.status_code))
         if r.status_code is 200:
             return r.json()
         else:
@@ -67,7 +66,6 @@ class WebStorage(StorageBackend):
         data = {'node_id': id, }
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        #print("Checking node %s" % (r.status_code))
         if r.status_code is 200:
             return r.json()['exists']
         else:
