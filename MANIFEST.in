@@ -1,4 +1,5 @@
 recursive-include readthedocs_ext *.css
 recursive-include readthedocs_ext *.js_t
 recursive-include readthedocs_ext *.js
+recursive-include readthedocs_ext *.tmpl
 include *.rst
