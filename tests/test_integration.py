@@ -41,3 +41,10 @@ class IntegrationTests(LanguageIntegrationTests):
             '_build/html/index.html',
             'media.readthedocs.org',
         )
+
+    def test_included_js(self):
+        self._run_test(
+            'pyexample',
+            '_build/html/index.html',
+            'readthedocs-dynamic-include.js',
+        )
