@@ -110,7 +110,8 @@ def update_body(app, pagename, templatename, context, doctree):
 def copy_media(app, exception):
     """ Move our dynamically generated files after build. """
     if app.builder.name == 'readthedocs' and not exception:
-        for file in ['readthedocs-dynamic-include.js_t', 'readthedocs-data.js_t']:
+        for file in ['readthedocs-dynamic-include.js_t', 'readthedocs-data.js_t',
+                     'searchtools.js_t']:
             app.info(bold('Copying %s... ' % file), nonl=True)
             dest_dir = os.path.join(app.builder.outdir, '_static')
             source = os.path.join(
@@ -122,6 +123,8 @@ def copy_media(app, exception):
                 ctx = app.builder.globalcontext
             except AttributeError:
                 ctx = {}
+            if app.builder.indexer is not None:
+                ctx.update(app.builder.indexer.context_for_searchtool())
             copy_static_entry(source, dest_dir, app.builder, ctx)
             app.info('done')
 
