@@ -30,19 +30,20 @@ HAS_MONKEYPATCH = False
 def finalize_media(app):
     """ Point media files at our media server. """
 
-    if app.builder.name == 'readthedocssinglehtmllocalmedia' or app.builder.format != 'html':
+    if (app.builder.name == 'readthedocssinglehtmllocalmedia' or
+            app.builder.format != 'html' or
+            not hasattr(app.builder, 'script_files')):
         return  # Use local media for downloadable files
     # Pull project data from conf.py if it exists
-    builder = app.builder
-    context = builder.config.html_context
+    context = app.builder.config.html_context
     MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
 
     # Put in our media files instead of putting them in the docs.
-    for index, file in enumerate(builder.script_files):
+    for index, file in enumerate(app.builder.script_files):
         if file in MEDIA_MAPPING.keys():
-            builder.script_files[index] = MEDIA_MAPPING[file] % MEDIA_URL
+            app.builder.script_files[index] = MEDIA_MAPPING[file] % MEDIA_URL
             if file == "_static/jquery.js":
-                builder.script_files.insert(
+                app.builder.script_files.insert(
                     index + 1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % MEDIA_URL)
 
 
@@ -59,7 +60,7 @@ def update_body(app, pagename, templatename, context, doctree):
             theme_css = '_static/css/theme.css'
         else:
             theme_css = '_static/css/badge_only.css'
-    elif app.builder.name == 'readthedocs':
+    elif app.builder.name in ['readthedocs', 'readthedocsdirhtml']:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
         else:
@@ -109,7 +110,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
 def copy_media(app, exception):
     """ Move our dynamically generated files after build. """
-    if app.builder.name == 'readthedocs' and not exception:
+    if app.builder.name in ['readthedocs', 'readthedocsdirhtml'] and not exception:
         for file in ['readthedocs-dynamic-include.js_t', 'readthedocs-data.js_t',
                      'searchtools.js_t']:
             app.info(bold('Copying %s... ' % file), nonl=True)
@@ -164,7 +165,6 @@ class ReadtheDocsDirectoryHTMLBuilder(DirectoryHTMLBuilder):
 
 
 class ReadtheDocsSingleFileHTMLBuilder(SingleFileHTMLBuilder):
-
     """
     Adds specific media files to script_files and css_files.
     """
