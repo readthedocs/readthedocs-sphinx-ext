@@ -97,7 +97,7 @@ def update_body(app, pagename, templatename, context, doctree):
             content = old_render(template, context)
             end_body = content.find('</body>')
             if end_body == -1:
-                raise Exception('No body in the HTML document')
+                app.warning("File doesn't look like HTML. Skipping RTD content addition")
             # Insert our content at the end of the body.
             content = content[:end_body] + rtd_content + content[end_body:]
             return content
