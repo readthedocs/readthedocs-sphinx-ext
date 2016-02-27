@@ -16,6 +16,9 @@ http://docs.readthedocs.org/en/latest/canonical.html
 -->
 <link rel="canonical" href="{{ canonical_url }}{{ canonical_page }}" />
 
+<link rel="stylesheet" href="{{ theme_css }}" type="text/css" />
+<link rel="stylesheet" href="{{ rtd_css_url }}" type="text/css" />
+
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}"></script>
 
 {% if page_source_suffix %} 		
@@ -29,6 +32,6 @@ READTHEDOCS_DATA['source_suffix'] = '{{ page_source_suffix }}'
 
 <!-- This requires the above data include -->
 <script type="text/javascript" src="{{ rtd_js_url }}"></script>
-<link rel="stylesheet" href="{{ rtd_css_url }}" type="text/css" />
+
 
 <!-- end RTD <extrahead> -->
