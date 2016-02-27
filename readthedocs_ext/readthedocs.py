@@ -24,9 +24,6 @@ STATIC_FILES = [
     'jquery.pageslide.js',
 ]
 
-HAS_MONKEYPATCH = False
-
-
 def finalize_media(app):
     """ Point media files at our media server. """
 
@@ -84,9 +81,7 @@ def update_body(app, pagename, templatename, context, doctree):
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
 
-    global HAS_MONKEYPATCH
-
-    if not HAS_MONKEYPATCH:
+    if not hasattr(app.builder.templates.render, '_patched'):
         # Janky monkey patch of template rendering to add our content
         old_render = app.builder.templates.render
 
@@ -104,8 +99,8 @@ def update_body(app, pagename, templatename, context, doctree):
                 app.debug("File doesn't look like HTML. Skipping RTD content addition")
             return content
 
+        rtd_render._patched = True
         app.builder.templates.render = rtd_render
-        HAS_MONKEYPATCH = True
 
 
 def copy_media(app, exception):
