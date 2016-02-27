@@ -16,7 +16,7 @@ http://docs.readthedocs.org/en/latest/canonical.html
 -->
 <link rel="canonical" href="{{ canonical_url }}{{ canonical_page }}" />
 
-<script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}" />
+<script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}"></script>
 
 {% if page_source_suffix %} 		
 <!-- Add page-specific source suffix, which must exist in the page data, not global -->
@@ -25,10 +25,10 @@ READTHEDOCS_DATA['source_suffix'] = {{ page_source_suffix }}
 </script>
 {% endif %}
 
-<script type="text/javascript" src="{{ pathto('_static/readthedocs-dynamic-include.js', 1) }}" />
+<script type="text/javascript" src="{{ pathto('_static/readthedocs-dynamic-include.js', 1) }}"></script>
 
 <!-- This requires the above data include -->
-<script type="text/javascript" src="{{ rtd_js_url }}" />
+<script type="text/javascript" src="{{ rtd_js_url }}"></script>
 <link rel="stylesheet" href="{{ rtd_css_url }}" type="text/css" />
 
 <!-- end RTD <extrahead> -->
