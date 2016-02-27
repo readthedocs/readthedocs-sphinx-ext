@@ -52,17 +52,21 @@ def update_body(app, pagename, templatename, context, doctree):
 
     This is the most reliable way to inject our content into the page.
     """
+
     MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '_static/css/theme.css'
         else:
             theme_css = '_static/css/badge_only.css'
-    else:
+    elif app.builder.name != 'readthedocs':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
         else:
             theme_css = '%scss/badge_only.css' % MEDIA_URL
+    else:
+        return
+
     template_context = context.copy()
     template_context['theme_css'] = theme_css
     template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
@@ -80,7 +84,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
     global HAS_MONKEYPATCH
 
-    if not HAS_MONKEYPATCH and app.builder.name == 'readthedocs':
+    if not HAS_MONKEYPATCH and
         # Janky monkey patch of template rendering to add our content
         old_render = app.builder.templates.render
 
