@@ -59,12 +59,13 @@ def update_body(app, pagename, templatename, context, doctree):
             theme_css = '_static/css/theme.css'
         else:
             theme_css = '_static/css/badge_only.css'
-    elif app.builder.name != 'readthedocs':
+    elif app.builder.name == 'readthedocs':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
         else:
             theme_css = '%scss/badge_only.css' % MEDIA_URL
     else:
+        # Only insert on our HTML builds
         return
 
     template_context = context.copy()
