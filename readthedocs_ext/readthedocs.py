@@ -2,6 +2,7 @@
 
 from __future__ import absolute_import
 import os
+import types
 
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
 from sphinx.util import copy_static_entry
@@ -74,14 +75,13 @@ def update_body(app, pagename, templatename, context, doctree):
         # Janky monkey patch of template rendering to add our content
         old_render = app.builder.templates.render
 
-        def rtd_render(template, context):
+        def rtd_render(self, template, render_context):
             """
             A decorator that renders the content with the users template renderer,
             then adds the Read the Docs HTML content at the end of body.
             """
-
             # Render Read the Docs content
-            template_context = context.copy()
+            template_context = render_context.copy()
             template_context['theme_css'] = theme_css
             template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
             template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
@@ -94,7 +94,7 @@ def update_body(app, pagename, templatename, context, doctree):
             rtd_content = app.builder.templates.render_string(templ, template_context)
 
             # Handle original render function
-            content = old_render(template, context)
+            content = old_render(template, render_context)
             end_body = content.lower().find('</head>')
 
             # Insert our content at the end of the body.
@@ -106,7 +106,8 @@ def update_body(app, pagename, templatename, context, doctree):
             return content
 
         rtd_render._patched = True
-        app.builder.templates.render = rtd_render
+        app.builder.templates.render = types.MethodType(rtd_render,
+                                                        app.builder.templates)
 
 
 def copy_media(app, exception):
