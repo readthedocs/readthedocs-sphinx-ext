@@ -24,6 +24,7 @@ STATIC_FILES = [
     'jquery.pageslide.js',
 ]
 
+
 def finalize_media(app):
     """ Point media files at our media server. """
 
