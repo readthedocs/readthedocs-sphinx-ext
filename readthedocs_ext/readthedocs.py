@@ -24,6 +24,8 @@ STATIC_FILES = [
     'jquery.pageslide.js',
 ]
 
+HAS_MONKEYPATCH = False
+
 
 def finalize_media(app):
     """ Point media files at our media server. """
@@ -73,16 +75,23 @@ def update_body(app, pagename, templatename, context, doctree):
     templ = open(source).read()
     rtd_content = app.builder.templates.render_string(templ, template_context)
 
-    if context and 'body' in context:
+    global HAS_MONKEYPATCH
 
-        # We include the media servers version here so we can update rtd.js across all
-        # documentation without rebuilding every one.
-        # If this script is embedded in each build,
-        # then updating the file across all docs is basically impossible.
-        context['body'] += rtd_content
-    else:
-        # TODO: Return template to render this content?
-        pass
+    if not HAS_MONKEYPATCH:
+        # Janky monkey patch of template rendering to add our content
+        old_render = app.builder.templates.render
+
+        def new_render(template, context):
+            content = old_render(template, context)
+            end_body = content.find('</body>')
+            if not end_body:
+                raise Exception('No body in the HTML document')
+            # Insert our content at the end of the body.
+            content = content[:end_head] + rtd_content + content[end_head:]
+            return content
+
+        app.builder.templates.render = new_render
+        HAS_MONKEYPATCH = True
 
 
 def copy_media(app, exception):

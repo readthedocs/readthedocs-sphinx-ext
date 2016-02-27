@@ -1,13 +1,14 @@
+
 <!-- RTD Extra Head -->
 
-{% if pagename == "index" %}
-    {% set canonical_page = "" %}
-{% elif pagename.endswith("/index") %}
-    {% set canonical_page = pagename[:-("/index"|length)] + "/" %}
-{% else %}
-    {% set ending = "/" if builder == "readthedocsdirhtml" else ".html" %}
-    {% set canonical_page = pagename + ending %}
-{% endif %}
+{%- if pagename == "index" %}
+    {%- set canonical_page = "" %}
+{%- elif pagename.endswith("/index") %}
+    {%- set canonical_page = pagename[:-("/index"|length)] + "/" %}
+{%- else %}
+    {%- set ending = "/" if builder == "readthedocsdirhtml" else ".html" %}
+    {%- set canonical_page = pagename + ending %}
+{%- endif %}
 
 <!-- 
 Always link to the latest version, as canonical.
@@ -16,6 +17,7 @@ http://docs.readthedocs.org/en/latest/canonical.html
 <link rel="canonical" href="{{ canonical_url }}{{ canonical_page }}" />
 
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}" />
+
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-dynamic-include.js', 1) }}" />
 
 <!-- This requires the above data include -->
@@ -23,4 +25,3 @@ http://docs.readthedocs.org/en/latest/canonical.html
 <link rel="stylesheet" href="{{ rtd_css_url }}" type="text/css" />
 
 <!-- end RTD <extrahead> -->
-
