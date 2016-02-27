@@ -81,16 +81,20 @@ def update_body(app, pagename, templatename, context, doctree):
         # Janky monkey patch of template rendering to add our content
         old_render = app.builder.templates.render
 
-        def new_render(template, context):
+        def rtd_render(template, context):
+            """
+            A decorator that renders the content with the users template renderer,
+            then adds the Read the Docs HTML content at the end of body.
+            """
             content = old_render(template, context)
             end_body = content.find('</body>')
-            if not end_body:
+            if end_body == -1:
                 raise Exception('No body in the HTML document')
             # Insert our content at the end of the body.
-            content = content[:end_head] + rtd_content + content[end_head:]
+            content = content[:end_body] + rtd_content + content[end_body:]
             return content
 
-        app.builder.templates.render = new_render
+        app.builder.templates.render = rtd_render
         HAS_MONKEYPATCH = True
 
 
