@@ -30,7 +30,7 @@ HAS_MONKEYPATCH = False
 def finalize_media(app):
     """ Point media files at our media server. """
 
-    if app.builder.name == 'readthedocs' or app.builder.format != 'html':
+    if app.builder.name == 'readthedocssinglehtmllocalmedia' or app.builder.format != 'html':
         return  # Use local media for downloadable files
     # Pull project data from conf.py if it exists
     builder = app.builder
