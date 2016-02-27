@@ -6,16 +6,4 @@
 Welcome to pyexample's documentation!
 =====================================
 
-.. toctree::
-
-   index
-
-Contents:
-
-.. toctree::
-   :maxdepth: 2
-
-
-
-
 Hey there friend!

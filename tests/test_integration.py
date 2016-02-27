@@ -1,6 +1,7 @@
 import os
 import shutil
 import unittest
+import io
 
 from sphinx.application import Sphinx
 
@@ -18,7 +19,7 @@ class LanguageIntegrationTests(unittest.TestCase):
                 buildername='%s' % builder,
             )
             app.build(force_all=True)
-            with open(test_file) as fin:
+            with io.open(test_file, encoding="utf-8") as fin:
                 text = fin.read().strip()
                 self.assertIn(test_string, text)
         finally:
@@ -31,20 +32,24 @@ class IntegrationTests(LanguageIntegrationTests):
     def test_integration(self):
         self._run_test(
             'pyexample',
-            '_build/html/index.html',
+            '_build/readthedocs/index.html',
             'Hey there friend!',
+            builder='readthedocs',
         )
 
     def test_media_integration(self):
         self._run_test(
             'pyexample',
-            '_build/html/index.html',
+            '_build/readthedocs/index.html',
             'media.readthedocs.org',
+            builder='readthedocs',
         )
 
     def test_included_js(self):
         self._run_test(
             'pyexample',
-            '_build/html/index.html',
+            '_build/readthedocs/index.html',
             'readthedocs-dynamic-include.js',
+            builder='readthedocs',
         )
+

@@ -4,6 +4,8 @@ python:
 sudo: false
 env:
  - TOX_ENV=lint
+ - TOX_ENV=py27
+ - TOX_ENV=py34
 install:
  - pip install tox
 script:
