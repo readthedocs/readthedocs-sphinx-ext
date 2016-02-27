@@ -75,6 +75,9 @@ def update_body(app, pagename, templatename, context, doctree):
     templ = open(source).read()
     rtd_content = app.builder.templates.render_string(templ, template_context)
 
+    # This is monkey patched on the signal because we can't know what the user
+    # has done with their `app.builder.templates` before now.
+
     global HAS_MONKEYPATCH
 
     if not HAS_MONKEYPATCH:
