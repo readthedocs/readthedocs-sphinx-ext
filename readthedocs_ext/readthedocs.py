@@ -95,7 +95,7 @@ def update_body(app, pagename, templatename, context, doctree):
             then adds the Read the Docs HTML content at the end of body.
             """
             content = old_render(template, context)
-            end_body = content.find('</body>')
+            end_body = content.lower().find('</body>')
             if end_body != -1:
                 # Insert our content at the end of the body.
                 content = content[:end_body] + rtd_content + content[end_body:]
