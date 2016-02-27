@@ -21,13 +21,13 @@ http://docs.readthedocs.org/en/latest/canonical.html
 
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}"></script>
 
-{% if page_source_suffix %} 		
 <!-- Add page-specific data, which must exist in the page js, not global -->
 <script type="text/javascript">
-READTHEDOCS_DATA['source_suffix'] = '{{ page_source_suffix }}'
 READTHEDOCS_DATA['page'] = '{{ pagename }}'
-</script>
+{% if page_source_suffix %} 		
+READTHEDOCS_DATA['source_suffix'] = '{{ page_source_suffix }}'
 {% endif %}
+</script>
 
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-dynamic-include.js', 1) }}"></script>
 
