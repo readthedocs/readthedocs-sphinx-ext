@@ -84,7 +84,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
     global HAS_MONKEYPATCH
 
-    if not HAS_MONKEYPATCH and
+    if not HAS_MONKEYPATCH:
         # Janky monkey patch of template rendering to add our content
         old_render = app.builder.templates.render
 
