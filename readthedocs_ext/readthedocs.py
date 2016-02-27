@@ -96,10 +96,11 @@ def update_body(app, pagename, templatename, context, doctree):
             """
             content = old_render(template, context)
             end_body = content.find('</body>')
-            if end_body == -1:
-                app.warn("File doesn't look like HTML. Skipping RTD content addition")
-            # Insert our content at the end of the body.
-            content = content[:end_body] + rtd_content + content[end_body:]
+            if end_body != -1:
+                # Insert our content at the end of the body.
+                content = content[:end_body] + rtd_content + content[end_body:]
+            else:
+                app.debug("File doesn't look like HTML. Skipping RTD content addition")
             return content
 
         app.builder.templates.render = rtd_render
