@@ -67,18 +67,6 @@ def update_body(app, pagename, templatename, context, doctree):
         # Only insert on our HTML builds
         return
 
-    template_context = context.copy()
-    template_context['theme_css'] = theme_css
-    template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
-    template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
-    source = os.path.join(
-        os.path.abspath(os.path.dirname(__file__)),
-        '_templates',
-        'readthedocs-insert.html.tmpl'
-    )
-    templ = open(source).read()
-    rtd_content = app.builder.templates.render_string(templ, template_context)
-
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
 
@@ -91,13 +79,30 @@ def update_body(app, pagename, templatename, context, doctree):
             A decorator that renders the content with the users template renderer,
             then adds the Read the Docs HTML content at the end of body.
             """
+
+            # Render Read the Docs content
+            template_context = context.copy()
+            template_context['theme_css'] = theme_css
+            template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
+            template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
+            source = os.path.join(
+                os.path.abspath(os.path.dirname(__file__)),
+                '_templates',
+                'readthedocs-insert.html.tmpl'
+            )
+            templ = open(source).read()
+            rtd_content = app.builder.templates.render_string(templ, template_context)
+
+            # Handle original render function
             content = old_render(template, context)
             end_body = content.lower().find('</head>')
+
+            # Insert our content at the end of the body.
             if end_body != -1:
-                # Insert our content at the end of the body.
                 content = content[:end_body] + rtd_content + content[end_body:]
             else:
                 app.debug("File doesn't look like HTML. Skipping RTD content addition")
+
             return content
 
         rtd_render._patched = True
