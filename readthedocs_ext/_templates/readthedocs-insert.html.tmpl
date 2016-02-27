@@ -18,6 +18,13 @@ http://docs.readthedocs.org/en/latest/canonical.html
 
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}" />
 
+{% if page_source_suffix %} 		
+<!-- Add page-specific source suffix, which must exist in the page data, not global -->
+<script type="text/javascript">
+READTHEDOCS_DATA['source_suffix'] = {{ page_source_suffix }}
+</script>
+{% endif %}
+
 <script type="text/javascript" src="{{ pathto('_static/readthedocs-dynamic-include.js', 1) }}" />
 
 <!-- This requires the above data include -->
