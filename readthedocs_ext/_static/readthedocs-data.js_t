@@ -2,17 +2,15 @@
     project: "{{ slug }}",
     version: "{{ current_version }}",
     language: "{{ rtd_language }}",
-    page: "{{ pagename }}",
+    subprojects: {},
+    canonical_url: "{{ canonical_url }}",
     theme: "{{ html_theme }}",
     builder: "sphinx",
     docroot: "{{ conf_py_path }}",
     source_suffix: "{{ source_suffix }}",
     api_host: "{{ api_host }}",
     commit: "{{ commit }}"
-  }
-  
-  // Old variables
-  var doc_version = "{{ current_version }}";
-  var doc_slug = "{{ slug }}";
-  var page_name = "{{ pagename }}";
-  var html_theme = "{{ html_theme }}";
+  };
+  {% for slug, url in subprojects %}
+  READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";
+  {% endfor %}
