@@ -44,6 +44,9 @@ def finalize_media(app):
             if file == "_static/jquery.js":
                 app.builder.script_files.insert(
                     index + 1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % MEDIA_URL)
+    app.builder.script_files.append(
+        '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
+    )
 
 
 def update_body(app, pagename, templatename, context, doctree):
@@ -83,7 +86,6 @@ def update_body(app, pagename, templatename, context, doctree):
             # Render Read the Docs content
             template_context = render_context.copy()
             template_context['theme_css'] = theme_css
-            template_context['rtd_js_url'] = '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
             template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
             source = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
