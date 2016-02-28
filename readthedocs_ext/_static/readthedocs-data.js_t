@@ -2,7 +2,6 @@
     project: "{{ slug }}",
     version: "{{ current_version }}",
     language: "{{ rtd_language }}",
-    page: "{{ pagename }}",
     theme: "{{ html_theme }}",
     builder: "sphinx",
     docroot: "{{ conf_py_path }}",
@@ -10,9 +9,3 @@
     api_host: "{{ api_host }}",
     commit: "{{ commit }}"
   }
-  
-  // Old variables
-  var doc_version = "{{ current_version }}";
-  var doc_slug = "{{ slug }}";
-  var page_name = "{{ pagename }}";
-  var html_theme = "{{ html_theme }}";

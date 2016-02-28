@@ -22,7 +22,7 @@ setup(
     # trying to add files...
     include_package_data=True,
     package_data={
-        '': ['_static/*.js', '_static/*.js_t', '_static/*.css'],
+        '': ['_static/*.js', '_static/*.js_t', '_static/*.css', '_templates/*.tmpl'],
     },
     **extra_setup
 )
