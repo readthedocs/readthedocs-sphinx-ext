@@ -71,6 +71,9 @@ def update_body(app, pagename, templatename, context, doctree):
         # Only insert on our HTML builds
         return
 
+    if theme_css not in app.builder.css_files:
+        app.builder.css_files.insert(0, theme_css)
+
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
 
@@ -85,7 +88,6 @@ def update_body(app, pagename, templatename, context, doctree):
             """
             # Render Read the Docs content
             template_context = render_context.copy()
-            template_context['theme_css'] = theme_css
             template_context['rtd_css_url'] = '%scss/readthedocs-doc-embed.css' % MEDIA_URL
             source = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
