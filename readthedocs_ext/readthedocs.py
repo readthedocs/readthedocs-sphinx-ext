@@ -71,7 +71,8 @@ def update_body(app, pagename, templatename, context, doctree):
         # Only insert on our HTML builds
         return
 
-    app.builder.css_files.insert(0, theme_css)
+    if theme_css not in app.builder.css_files:
+        app.builder.css_files.insert(0, theme_css)
 
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
