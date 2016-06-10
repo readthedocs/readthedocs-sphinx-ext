@@ -49,7 +49,7 @@ def process_meta(app, doctree, fromdocname):
                         warning = nodes.warning(prose, prose)
                         doctree.insert(0, warning)
                     if app.config['versionwarning-console']:
-                        app.info(bold('[Version Warning: %s] ' % pagename) + red(text))
+                        app.warn(bold('[Version Warning: %s] ' % pagename) + red(text))
 
 
 def setup(app):
