@@ -296,6 +296,7 @@ var Search = {
    */
   performObjectSearch : function(object, otherterms) {
     var filenames = this._index.filenames;
+    var docnames = this._index.docnames;
     var objects = this._index.objects;
     var objnames = this._index.objnames;
     var titles = this._index.titles;
@@ -349,7 +350,9 @@ var Search = {
           } else {
             score += Scorer.objPrioDefault;
           }
-          results.push([filenames[match[0]], fullname, '#'+anchor, descr, score]);
+          // results.push([filenames[match[0]], fullname, '#'+anchor, descr, score]);
+          results.push([docnames[match[0]], fullname, '#'+anchor, descr, score, filenames[match[0]]]);
+
         }
       }
     }
