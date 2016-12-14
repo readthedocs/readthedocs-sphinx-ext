@@ -364,6 +364,7 @@ var Search = {
    * search for full-text terms in the index
    */
   performTermsSearch : function(searchterms, excluded, terms, score) {
+    var docnames = this._index.docnames;
     var filenames = this._index.filenames;
     var titles = this._index.titles;
 
@@ -409,7 +410,8 @@ var Search = {
 
       // if we have still a valid result we can add it to the result list
       if (valid) {
-        results.push([filenames[file], titles[file], '', null, score]);
+        //results.push([filenames[file], titles[file], '', null, score]);
+        results.push([docnames[file], titles[file], '', null, score, filenames[file]]);
       }
     }
     return results;
