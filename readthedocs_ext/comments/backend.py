@@ -37,39 +37,35 @@ class WebStorage(StorageBackend):
         data = {'node': node}
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        if r.status_code is 200:
+        if r.status_code == 200:
             return r.json()
-        else:
-            return False
+        return False
 
     def get_project_metadata(self, project):
         url = self.url.replace('/websupport', '') + "/api/v2/comments/"
         data = {'project': project}
         r = requests.get(url, params=data)
-        if r.status_code is 200:
+        if r.status_code == 200:
             return r.json()
-        else:
-            return False
+        return False
 
     def get_metadata(self, docname, moderator=None):
         url = self.url + "/_get_metadata"
         data = {'page': docname}
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        if r.status_code is 200:
+        if r.status_code == 200:
             return r.json()
-        else:
-            return False
+        return False
 
     def has_node(self, id):
         url = self.url + "/_has_node"
         data = {'node_id': id, }
         self._add_server_data(data)
         r = requests.get(url, params=data)
-        if r.status_code is 200:
+        if r.status_code == 200:
             return r.json()['exists']
-        else:
-            return False
+        return False
 
     def add_node(self, id, document, source):
         url = self.url + "/_add_node"
