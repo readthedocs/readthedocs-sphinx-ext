@@ -19,21 +19,21 @@ class BuilderMixin(object):  # pylint: disable=old-style-class
     new path.
     """
 
-    static_override_files = []
+    static_readthedocs_files = []
 
-    def get_static_override_context(self):
+    def get_static_readthedocs_context(self):
         return self.globalcontext.copy()
 
-    def copy_static_override_files(self):
-        self.app.info(bold('copying static override files... '), nonl=True)
-        for filename in self.static_override_files:
+    def copy_static_readthedocs_files(self):
+        self.app.info(bold('copying readthedocs static files... '), nonl=True)
+        for filename in self.static_readthedocs_files:
             path_dest = os.path.join(self.outdir, '_static')
             path_src = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
                 '_static',
                 filename
             )
-            ctx = self.get_static_override_context()
+            ctx = self.get_static_readthedocs_context()
             if sphinx.version_info < (1, 5):
                 copy_static_entry(
                     path_src,
@@ -51,10 +51,10 @@ class BuilderMixin(object):  # pylint: disable=old-style-class
         self.app.info('done')
 
     def copy_static_files(self):
-        """Copy override files after initial static pass
+        """Copy Read the Docs specific files after initial static pass
 
         This overrides the base builder ``copy_static_files`` method to inject
         custom static files.
         """
         super(BuilderMixin, self).copy_static_files()
-        self.copy_static_override_files()
+        self.copy_static_readthedocs_files()

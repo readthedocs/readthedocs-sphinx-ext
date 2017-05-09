@@ -40,14 +40,14 @@ def finalize_comment_media(app):
 
 class CommentsBuilderMixin(BuilderMixin):
 
-    static_override_files = [
+    static_readthedocs_files = [
         'sphinxweb.css',
         'jquery.pageslide.css',
         'jquery.pageslide.js',
     ]
 
-    def get_static_override_context(self):
-        ctx = super(CommentsBuilderMixin, self).get_static_override_context()
+    def get_static_readthedocs_context(self):
+        ctx = super(CommentsBuilderMixin, self).get_static_readthedocs_context()
         ctx['websupport2_base_url'] = self.config.websupport2_base_url
         ctx['websupport2_static_url'] = self.config.websupport2_static_url
         return ctx

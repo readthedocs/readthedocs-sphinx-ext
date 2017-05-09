@@ -115,7 +115,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
 class HtmlBuilderMixin(BuilderMixin):
 
-    static_override_files = [
+    static_readthedocs_files = [
         'readthedocs-dynamic-include.js_t',
         'readthedocs-data.js_t',
         # We patch searchtools and copy it with a special handler
@@ -132,14 +132,14 @@ class HtmlBuilderMixin(BuilderMixin):
         (re.MULTILINE | re.VERBOSE)
     )
 
-    def get_static_override_context(self):
-        ctx = super(HtmlBuilderMixin, self).get_static_override_context()
+    def get_static_readthedocs_context(self):
+        ctx = super(HtmlBuilderMixin, self).get_static_readthedocs_context()
         if self.indexer is not None:
             ctx.update(self.indexer.context_for_searchtool())
         return ctx
 
-    def copy_static_override_files(self):
-        super(HtmlBuilderMixin, self).copy_static_override_files()
+    def copy_static_readthedocs_files(self):
+        super(HtmlBuilderMixin, self).copy_static_readthedocs_files()
         self._copy_searchtools()
 
     def _copy_searchtools(self, renderer=None):
@@ -171,7 +171,7 @@ class HtmlBuilderMixin(BuilderMixin):
                     data = self.REPLACEMENT_PATTERN.sub(self.REPLACEMENT_TEXT, data)
                     h_dest.write(renderer.render_string(
                         data,
-                        self.get_static_override_context()
+                        self.get_static_readthedocs_context()
                     ))
         else:
             self.app.warn('Missing searchtools.js_t')
