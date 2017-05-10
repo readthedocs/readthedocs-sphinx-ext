@@ -5,6 +5,7 @@ from collections import defaultdict
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder
 
 from . import backend, translator
+from ..mixins import BuilderMixin
 
 
 def finalize_comment_media(app):
@@ -37,7 +38,22 @@ def finalize_comment_media(app):
     builder.css_files.append('_static/jquery.pageslide.css')
 
 
-class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
+class CommentsBuilderMixin(BuilderMixin):
+
+    static_readthedocs_files = [
+        'sphinxweb.css',
+        'jquery.pageslide.css',
+        'jquery.pageslide.js',
+    ]
+
+    def get_static_readthedocs_context(self):
+        ctx = super(CommentsBuilderMixin, self).get_static_readthedocs_context()
+        ctx['websupport2_base_url'] = self.config.websupport2_base_url
+        ctx['websupport2_static_url'] = self.config.websupport2_static_url
+        return ctx
+
+
+class ReadtheDocsBuilderComments(CommentsBuilderMixin, StandaloneHTMLBuilder):
 
     """
     Comment Builders.
@@ -50,13 +66,12 @@ class ReadtheDocsBuilderComments(StandaloneHTMLBuilder):
 
     def init(self):
         StandaloneHTMLBuilder.init(self)
-        finalize_comment_media(self)
 
     def init_translator_class(self):
         self.translator_class = translator.UUIDTranslator
 
 
-class ReadtheDocsDirectoryHTMLBuilderComments(DirectoryHTMLBuilder):
+class ReadtheDocsDirectoryHTMLBuilderComments(CommentsBuilderMixin, DirectoryHTMLBuilder):
 
     """ Adds specific media files to script_files and css_files. """
     name = 'readthedocsdirhtml-comments'

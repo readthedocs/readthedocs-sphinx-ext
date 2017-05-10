@@ -1,30 +1,15 @@
-import os
-import shutil
 import unittest
-import io
 
-from sphinx.application import Sphinx
+from readthedocs_ext.readthedocs import HtmlBuilderMixin
+
+from .util import sphinx_build, build_output
 
 
 class LanguageIntegrationTests(unittest.TestCase):
 
     def _run_test(self, test_dir, test_file, test_string, builder='html'):
-        os.chdir('tests/{0}'.format(test_dir))
-        try:
-            app = Sphinx(
-                srcdir='.',
-                confdir='.',
-                outdir='_build/%s' % builder,
-                doctreedir='_build/.doctrees',
-                buildername='%s' % builder,
-            )
-            app.build(force_all=True)
-            with io.open(test_file, encoding="utf-8") as fin:
-                text = fin.read().strip()
-                self.assertIn(test_string, text)
-        finally:
-            shutil.rmtree('_build')
-            os.chdir('../..')
+        with build_output(test_dir, test_file, builder) as data:
+            self.assertIn(test_string, data)
 
 
 class IntegrationTests(LanguageIntegrationTests):
@@ -53,3 +38,21 @@ class IntegrationTests(LanguageIntegrationTests):
             builder='readthedocs',
         )
 
+    def test_replacement_pattern(self):
+        pattern = HtmlBuilderMixin.REPLACEMENT_PATTERN
+        src = "$(document).ready(function() {\n  Search.init();\n});"
+        self.assertRegexpMatches(src, pattern)
+        # Minor changes to spacing, just to ensure rule is correct. This should
+        # never happen as this block of code is 10 years old
+        src = "$(document).ready(function    ()     {\n    Search.init();\n});"
+        self.assertRegexpMatches(src, pattern)
+
+    def test_searchtools_is_patched(self):
+        with build_output('pyexample', '_build/readthedocs/_static/searchtools.js',
+                          builder='readthedocs') as data:
+            self.assertNotIn('Search.init();', data)
+            self.assertNotRegexpMatches(
+                data,
+                HtmlBuilderMixin.REPLACEMENT_PATTERN
+            )
+            self.assertIn(HtmlBuilderMixin.REPLACEMENT_TEXT, data)

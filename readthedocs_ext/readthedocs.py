@@ -1,29 +1,28 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import
+
+import codecs
 import os
+import re
 import types
 
+import sphinx
+from sphinx import package_dir
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
-from sphinx.util import copy_static_entry
 from sphinx.util.console import bold
 
 from .comments.builder import (finalize_comment_media, ReadtheDocsBuilderComments,
                                ReadtheDocsDirectoryHTMLBuilderComments)
 from .comments.directive import CommentConfigurationDirective
 from .embed import EmbedDirective
+from .mixins import BuilderMixin
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
     "_static/underscore.js": "%sjavascript/underscore.js",
     "_static/doctools.js": "%sjavascript/doctools.js",
 }
-
-STATIC_FILES = [
-    'sphinxweb.css',
-    'jquery.pageslide.css',
-    'jquery.pageslide.js',
-]
 
 
 def finalize_media(app):
@@ -114,74 +113,84 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
-def copy_media(app, exception):
-    """ Move our dynamically generated files after build. """
-    if app.builder.name in ['readthedocs', 'readthedocsdirhtml'] and not exception:
-        for file in ['readthedocs-dynamic-include.js_t', 'readthedocs-data.js_t',
-                     'searchtools.js_t']:
-            app.info(bold('Copying %s... ' % file), nonl=True)
-            dest_dir = os.path.join(app.builder.outdir, '_static')
-            source = os.path.join(
-                os.path.abspath(os.path.dirname(__file__)),
-                '_static',
-                file
-            )
-            try:
-                ctx = app.builder.globalcontext
-            except AttributeError:
-                ctx = {}
-            if app.builder.indexer is not None:
-                ctx.update(app.builder.indexer.context_for_searchtool())
-            copy_static_entry(source, dest_dir, app.builder, ctx)
-            app.info('done')
+class HtmlBuilderMixin(BuilderMixin):
 
-    if 'comments' in app.builder.name and not exception:
-        for file in STATIC_FILES:
-            app.info(bold('Copying %s... ' % file), nonl=True)
-            dest_dir = os.path.join(app.builder.outdir, '_static')
-            source = os.path.join(
-                os.path.abspath(os.path.dirname(__file__)),
-                '_static',
-                file
-            )
-            try:
-                ctx = app.builder.globalcontext
-            except AttributeError:
-                ctx = {}
-            ctx['websupport2_base_url'] = app.builder.config.websupport2_base_url
-            ctx['websupport2_static_url'] = app.builder.config.websupport2_static_url
-            copy_static_entry(source, dest_dir, app.builder, ctx)
-            app.info('done')
+    static_readthedocs_files = [
+        'readthedocs-dynamic-include.js_t',
+        'readthedocs-data.js_t',
+        # We patch searchtools and copy it with a special handler
+        # 'searchtools.js_t'
+    ]
+
+    REPLACEMENT_TEXT = '/* Search initialization removed for Read the Docs */'
+    REPLACEMENT_PATTERN = re.compile(
+        r'''
+        ^\$\(document\).ready\(function\s*\(\)\s*{(?:\n|\r\n?)
+        \s*Search.init\(\);(?:\n|\r\n?)
+        \}\);
+        ''',
+        (re.MULTILINE | re.VERBOSE)
+    )
+
+    def get_static_readthedocs_context(self):
+        ctx = super(HtmlBuilderMixin, self).get_static_readthedocs_context()
+        if self.indexer is not None:
+            ctx.update(self.indexer.context_for_searchtool())
+        return ctx
+
+    def copy_static_readthedocs_files(self):
+        super(HtmlBuilderMixin, self).copy_static_readthedocs_files()
+        self._copy_searchtools()
+
+    def _copy_searchtools(self, renderer=None):
+        """Copy and patch searchtools
+
+        This uses the included Sphinx version's searchtools, but patches it to
+        remove automatic initialization. This is a fork of
+        ``sphinx.util.fileutil.copy_asset``
+        """
+        self.app.info(bold('copying searchtools... '), nonl=True)
+
+        path_src = os.path.join(package_dir, 'themes', 'basic', 'static',
+                                'searchtools.js_t')
+        if os.path.exists(path_src):
+            path_dest = os.path.join(self.outdir, '_static', 'searchtools.js')
+            if renderer is None:
+                # Sphinx 1.4 used the renderer from the existing builder, but
+                # the pattern for Sphinx 1.5 is to pass in a renderer separate
+                # from the builder. This supports both patterns for future
+                # compatibility
+                if sphinx.version_info < (1, 5):
+                    renderer = self.templates
+                else:
+                    from sphinx.util.template import SphinxRenderer
+                    renderer = SphinxRenderer()
+            with codecs.open(path_src, 'r', encoding='utf-8') as h_src:
+                with codecs.open(path_dest, 'w', encoding='utf-8') as h_dest:
+                    data = h_src.read()
+                    data = self.REPLACEMENT_PATTERN.sub(self.REPLACEMENT_TEXT, data)
+                    h_dest.write(renderer.render_string(
+                        data,
+                        self.get_static_readthedocs_context()
+                    ))
+        else:
+            self.app.warn('Missing searchtools.js_t')
+        self.app.info('done')
 
 
-class ReadtheDocsBuilder(StandaloneHTMLBuilder):
-
-    """
-    Adds specific media files to script_files and css_files.
-    """
+class ReadtheDocsBuilder(HtmlBuilderMixin, StandaloneHTMLBuilder):
     name = 'readthedocs'
 
 
-class ReadtheDocsDirectoryHTMLBuilder(DirectoryHTMLBuilder):
-
-    """
-    Adds specific media files to script_files and css_files.
-    """
+class ReadtheDocsDirectoryHTMLBuilder(HtmlBuilderMixin, DirectoryHTMLBuilder):
     name = 'readthedocsdirhtml'
 
 
-class ReadtheDocsSingleFileHTMLBuilder(SingleFileHTMLBuilder):
-    """
-    Adds specific media files to script_files and css_files.
-    """
+class ReadtheDocsSingleFileHTMLBuilder(BuilderMixin, SingleFileHTMLBuilder):
     name = 'readthedocssinglehtml'
 
 
-class ReadtheDocsSingleFileHTMLBuilderLocalMedia(SingleFileHTMLBuilder):
-
-    """
-    Adds specific media files to script_files and css_files.
-    """
+class ReadtheDocsSingleFileHTMLBuilderLocalMedia(BuilderMixin, SingleFileHTMLBuilder):
     name = 'readthedocssinglehtmllocalmedia'
 
 
@@ -193,7 +202,6 @@ def setup(app):
     app.connect('builder-inited', finalize_media)
     app.connect('builder-inited', finalize_comment_media)
     app.connect('html-page-context', update_body)
-    app.connect('build-finished', copy_media)
 
     # Comments
     # app.connect('env-updated', add_comments_to_doctree)
