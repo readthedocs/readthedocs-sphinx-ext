@@ -1,6 +1,6 @@
   var READTHEDOCS_DATA = {
     project: "{{ slug }}",
-    version: "{{ current_version }}",
+    version: "{{ version_slug }}",
     language: "{{ rtd_language }}",
     subprojects: {},
     canonical_url: "{{ canonical_url }}",

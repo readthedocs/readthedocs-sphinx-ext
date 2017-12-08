@@ -103,7 +103,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
             # Insert our content at the end of the body.
             if end_body != -1:
-                content = content[:end_body] + rtd_content + content[end_body:]
+                content = content[:end_body] + rtd_content + "\n" + content[end_body:]
             else:
                 app.debug("File doesn't look like HTML. Skipping RTD content addition")
 
