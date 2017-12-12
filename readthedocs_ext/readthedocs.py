@@ -12,9 +12,6 @@ from sphinx import package_dir
 from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
 from sphinx.util.console import bold
 
-from .comments.builder import (finalize_comment_media, ReadtheDocsBuilderComments,
-                               ReadtheDocsDirectoryHTMLBuilderComments)
-from .comments.directive import CommentConfigurationDirective
 from .embed import EmbedDirective
 from .mixins import BuilderMixin
 
@@ -200,19 +197,10 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
-    app.connect('builder-inited', finalize_comment_media)
     app.connect('html-page-context', update_body)
 
-    # Comments
-    # app.connect('env-updated', add_comments_to_doctree)
-    app.add_directive(
-        'comment-configure', CommentConfigurationDirective)
-    app.add_builder(ReadtheDocsBuilderComments)
-    app.add_builder(ReadtheDocsDirectoryHTMLBuilderComments)
-    app.add_config_value(
-        'websupport2_base_url', 'http://localhost:8000/websupport', 'html')
-    app.add_config_value(
-        'websupport2_static_url', 'http://localhost:8000/static', 'html')
+    app.add_config_value('websupport2_base_url', 'http://localhost:8000/websupport', 'html')
+    app.add_config_value('websupport2_static_url', 'http://localhost:8000/static', 'html')
 
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
