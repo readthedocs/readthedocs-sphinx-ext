@@ -13,6 +13,8 @@ def on_page_context(app, pagename, templatename, context, doctree):
     if 'meta' in context and 'template' in context['meta']:
         return context['meta']['template']
 
+    return None
+
 
 def setup(app):
     app.connect('html-page-context', on_page_context)
