@@ -2,6 +2,7 @@
     project: "{{ slug }}",
     version: "{{ version_slug }}",
     language: "{{ rtd_language }}",
+
     subprojects: {},
     canonical_url: "{{ canonical_url }}",
     theme: "{{ html_theme }}",
@@ -9,7 +10,10 @@
     docroot: "{{ conf_py_path }}",
     source_suffix: "{{ source_suffix }}",
     api_host: "{{ api_host }}",
-    commit: "{{ commit }}"
+    commit: "{{ commit }}",
+
+    analytics_code: {% if global_analytics_code %}'{{ global_analytics_code }}'{% else %}null{% endif %},
+    user_analytics_code: {% if user_analytics_code %}'{{ user_analytics_code }}'{% else %}null{% endif %}
   };
   {% for slug, url in subprojects %}
   READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";

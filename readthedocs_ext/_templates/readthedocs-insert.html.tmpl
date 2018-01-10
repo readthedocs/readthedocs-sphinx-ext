@@ -23,11 +23,11 @@ http://docs.readthedocs.org/en/latest/canonical.html
 <!-- Add page-specific data, which must exist in the page js, not global -->
 <script type="text/javascript">
 READTHEDOCS_DATA['page'] = '{{ pagename }}'
-{%- if page_source_suffix %} 		
+{%- if page_source_suffix %}
 READTHEDOCS_DATA['source_suffix'] = '{{ page_source_suffix }}'
 {%- endif %}
 </script>
 
-<script type="text/javascript" src="{{ pathto('_static/readthedocs-dynamic-include.js', 1) }}"></script>
+<script type="text/javascript" src="{{ rtd_js_url }}"></script>
 
 <!-- end RTD <extrahead> -->
