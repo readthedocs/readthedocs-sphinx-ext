@@ -2,6 +2,7 @@
     project: "{{ slug }}",
     version: "{{ version_slug }}",
     language: "{{ rtd_language }}",
+    programming_language: "{{ programming_language }}",
     subprojects: {},
     canonical_url: "{{ canonical_url }}",
     theme: "{{ html_theme }}",
