@@ -1,8 +1,8 @@
-  var READTHEDOCS_DATA = {
+var READTHEDOCS_DATA = {
     project: "{{ slug }}",
     version: "{{ version_slug }}",
     language: "{{ rtd_language }}",
-
+    programming_language: "{{ programming_language }}",
     subprojects: {},
     canonical_url: "{{ canonical_url }}",
     theme: "{{ html_theme }}",
@@ -12,9 +12,10 @@
     api_host: "{{ api_host }}",
     commit: "{{ commit }}",
 
-    analytics_code: {% if global_analytics_code %}'{{ global_analytics_code }}'{% else %}null{% endif %},
+    global_analytics_code: {% if global_analytics_code %}'{{ global_analytics_code }}'{% else %}null{% endif %},
     user_analytics_code: {% if user_analytics_code %}'{{ user_analytics_code }}'{% else %}null{% endif %}
-  };
-  {% for slug, url in subprojects %}
-  READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";
-  {% endfor %}
+};
+
+{% for slug, url in subprojects %}
+READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";
+{% endfor %}
