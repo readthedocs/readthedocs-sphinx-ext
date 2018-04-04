@@ -34,7 +34,7 @@ class IntegrationTests(LanguageIntegrationTests):
         self._run_test(
             'pyexample',
             '_build/readthedocs/index.html',
-            'readthedocs-dynamic-include.js',
+            'readthedocs-analytics.js',
             builder='readthedocs',
         )
 
