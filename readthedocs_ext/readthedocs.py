@@ -6,6 +6,7 @@ import codecs
 import os
 import re
 import types
+from distutils.version import LooseVersion
 
 import sphinx
 from sphinx import package_dir
@@ -70,7 +71,18 @@ def update_body(app, pagename, templatename, context, doctree):
         # Only insert on our HTML builds
         return
 
-    if theme_css not in app.builder.css_files:
+    inject_css = True
+
+    # After v0.3.0 of the sphinx theme, the theme CSS should not be injected
+    # This decouples the theme CSS (which is versioned independently) from readthedocs.org
+    if theme_css.endswith('sphinx_rtd_theme.css'):
+        try:
+            import sphinx_rtd_theme
+            inject_css = LooseVersion(sphinx_rtd_theme.__version__) <= LooseVersion('0.3.0')
+        except ImportError:
+            pass
+
+    if inject_css and theme_css not in app.builder.css_files:
         app.builder.css_files.insert(0, theme_css)
 
     # This is monkey patched on the signal because we can't know what the user
