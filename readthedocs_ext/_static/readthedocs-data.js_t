@@ -1,4 +1,4 @@
-  var READTHEDOCS_DATA = {
+var READTHEDOCS_DATA = {
     project: "{{ slug }}",
     version: "{{ version_slug }}",
     language: "{{ rtd_language }}",
@@ -10,8 +10,12 @@
     docroot: "{{ conf_py_path }}",
     source_suffix: "{{ source_suffix }}",
     api_host: "{{ api_host }}",
-    commit: "{{ commit }}"
-  };
-  {% for slug, url in subprojects %}
-  READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";
-  {% endfor %}
+    commit: "{{ commit }}",
+
+    global_analytics_code: {% if global_analytics_code %}'{{ global_analytics_code }}'{% else %}null{% endif %},
+    user_analytics_code: {% if user_analytics_code %}'{{ user_analytics_code }}'{% else %}null{% endif %}
+};
+
+{% for slug, url in subprojects %}
+READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";
+{% endfor %}
