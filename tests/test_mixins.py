@@ -22,10 +22,3 @@ class MixinTests(unittest.TestCase):
                 'search_scorer_tool',
                 app.builder.get_static_readthedocs_context(),
             )
-
-    def test_comments_builder_context_contains_additions(self):
-        with sphinx_build('pyexample', 'readthedocs-comments') as app:
-            self.assertIn(
-                'websupport2_base_url',
-                app.builder.get_static_readthedocs_context(),
-            )

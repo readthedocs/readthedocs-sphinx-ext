@@ -4,3 +4,5 @@ build
 dist
 wheelhouse
 .tox
+.python-version
+.pytest_cache/
