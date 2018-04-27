@@ -202,9 +202,6 @@ def setup(app):
     app.connect('builder-inited', finalize_media)
     app.connect('html-page-context', update_body)
 
-    app.add_config_value('websupport2_base_url', 'http://localhost:8000/websupport', 'html')
-    app.add_config_value('websupport2_static_url', 'http://localhost:8000/static', 'html')
-
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
     app.add_config_value('readthedocs_embed_project', '', 'html')
