@@ -73,12 +73,12 @@ def update_body(app, pagename, templatename, context, doctree):
 
     inject_css = True
 
-    # After v0.3.0 of the sphinx theme, the theme CSS should not be injected
+    # Starting at v0.4.0 of the sphinx theme, the theme CSS should not be injected
     # This decouples the theme CSS (which is versioned independently) from readthedocs.org
     if theme_css.endswith('sphinx_rtd_theme.css'):
         try:
             import sphinx_rtd_theme
-            inject_css = LooseVersion(sphinx_rtd_theme.__version__) <= LooseVersion('0.3.0')
+            inject_css = LooseVersion(sphinx_rtd_theme.__version__) < LooseVersion('0.4.0')
         except ImportError:
             pass
 
