@@ -169,7 +169,9 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
             jfile.write(json.dumps(to_context, indent=4))
             log.info('{page} processed.'.format(page=outjson))
     except Exception:
-        log.exception('Failure in JSON search dump')
+        log.exception(
+            'Failure in JSON search dump for {page}'.format(page=outjson)
+        )
 
 
 class HtmlBuilderMixin(BuilderMixin):
