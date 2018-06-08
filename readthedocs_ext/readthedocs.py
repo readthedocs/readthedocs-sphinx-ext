@@ -155,7 +155,9 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
     try:
         # We need to get the output directory where the docs are built
         # _build/json
-        build_json = os.path.join(app.outdir, '..', 'json')
+        build_json = os.path.abspath(
+            os.path.join(app.outdir, '..', 'json')
+        )
         outjson = os.path.join(build_json, pagename + '.json')
         outdir = os.path.dirname(outjson)
         if not os.path.exists(outdir):
