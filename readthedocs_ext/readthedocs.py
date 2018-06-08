@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import codecs
+import json
 import os
 import re
 import types
@@ -10,17 +11,41 @@ from distutils.version import LooseVersion
 
 import sphinx
 from sphinx import package_dir
-from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
+from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
+                                  StandaloneHTMLBuilder)
+from sphinx.util import logging
 from sphinx.util.console import bold
 
 from .embed import EmbedDirective
 from .mixins import BuilderMixin
+
+log = logging.getLogger(__name__)
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
     "_static/underscore.js": "%sjavascript/underscore.js",
     "_static/doctools.js": "%sjavascript/doctools.js",
 }
+
+
+#  Whitelist keys that we want to output
+KEYS = [
+    'body',
+    'prev',
+    'display_toc',
+    'title',
+    'sourcename',
+    'customsidebar',
+    'current_page_name',
+    'next',
+    'sidebars',
+    'metatags',
+    'meta',
+    'parents',
+    'toc',
+    'alabaster_version',
+    'page_source_suffix'
+]
 
 
 def finalize_media(app):
@@ -126,6 +151,27 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
+def generate_json_artifacts(app, pagename, templatename, context, doctree):
+    try:
+        # We need to get the output directory where the docs are built
+        # _build/json
+        build_json = os.path.join(app.outdir, '..', 'json')
+        outjson = os.path.join(build_json, pagename + '.json')
+        outdir = os.path.dirname(outjson)
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        with open(outjson, 'w+') as jfile:
+            to_context = {
+                key: context[key]
+                for key in context
+                if key in context
+            }
+            jfile.write(json.dumps(to_context, indent=4))
+            log.info('{page} processed.'.format(page=outjson))
+    except Exception:
+        log.exception('Failure in JSON search dump')
+
+
 class HtmlBuilderMixin(BuilderMixin):
 
     static_readthedocs_files = [
@@ -213,6 +259,7 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
     app.connect('html-page-context', update_body)
+    app.connect('html-page-context', generate_json_artifacts)
 
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
