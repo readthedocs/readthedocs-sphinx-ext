@@ -31,20 +31,21 @@ MEDIA_MAPPING = {
 #  Whitelist keys that we want to output
 KEYS = [
     'body',
-    'prev',
+    'alabaster_version',
     'display_toc',
     'title',
     'sourcename',
     'customsidebar',
+    'metatags',
     'current_page_name',
     'next',
-    'sidebars',
-    'metatags',
+    'rellinks',
     'meta',
     'parents',
+    'sidebars',
     'toc',
-    'alabaster_version',
-    'page_source_suffix'
+    'prev',
+    'page_source_suffix',
 ]
 
 
