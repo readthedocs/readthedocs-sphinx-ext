@@ -165,7 +165,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         with open(outjson, 'w+') as jfile:
             to_context = {
                 key: context[key]
-                for key in context
+                for key in KEYS
                 if key in context
             }
             jfile.write(json.dumps(to_context, indent=4))
