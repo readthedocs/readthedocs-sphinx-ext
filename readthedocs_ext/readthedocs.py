@@ -33,7 +33,8 @@ MEDIA_MAPPING = {
 }
 
 
-#  Whitelist keys that we want to output
+# Whitelist keys that we want to output
+# to the json artifacts.
 KEYS = [
     'body',
     'alabaster_version',
@@ -169,7 +170,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         build_json = os.path.abspath(
             os.path.join(app.outdir, '..', 'json')
         )
-        outjson = os.path.join(build_json, pagename + '.json')
+        outjson = os.path.join(build_json, pagename + '.fjson')
         outdir = os.path.dirname(outjson)
         if not os.path.exists(outdir):
             os.makedirs(outdir)
