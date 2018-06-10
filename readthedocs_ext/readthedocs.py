@@ -19,6 +19,7 @@ from .embed import EmbedDirective
 from .mixins import BuilderMixin
 
 try:
+    # Avaliable from Sphinx 1.6
     from sphinx.util.logging import getLogger
 except ImportError:
     from logging import getLogger
