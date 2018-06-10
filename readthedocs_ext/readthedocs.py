@@ -13,13 +13,17 @@ import sphinx
 from sphinx import package_dir
 from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
                                   StandaloneHTMLBuilder)
-from sphinx.util import logging
 from sphinx.util.console import bold
 
 from .embed import EmbedDirective
 from .mixins import BuilderMixin
 
-log = logging.getLogger(__name__)
+try:
+    from sphinx.util.logging import getLogger
+except ImportError:
+    from logging import getLogger
+
+log = getLogger(__name__)
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
