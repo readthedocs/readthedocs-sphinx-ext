@@ -153,9 +153,14 @@ def update_body(app, pagename, templatename, context, doctree):
 
 
 def generate_json_artifacts(app, pagename, templatename, context, doctree):
+    """
+    Generate JSON artifacts for each page.
+
+    This way we can skip generating this in other build step.
+    """
     try:
         # We need to get the output directory where the docs are built
-        # _build/json
+        # _build/json.
         build_json = os.path.abspath(
             os.path.join(app.outdir, '..', 'json')
         )
@@ -163,13 +168,13 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         outdir = os.path.dirname(outjson)
         if not os.path.exists(outdir):
             os.makedirs(outdir)
-        with open(outjson, 'w+') as jfile:
+        with open(outjson, 'w+') as json_file:
             to_context = {
                 key: context[key]
                 for key in KEYS
                 if key in context
             }
-            jfile.write(json.dumps(to_context, indent=4))
+            json_file.write(json.dumps(to_context, indent=4))
             log.info('{page} processed.'.format(page=outjson))
     except Exception:
         log.exception(
