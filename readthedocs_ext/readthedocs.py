@@ -37,20 +37,11 @@ MEDIA_MAPPING = {
 # to the json artifacts.
 KEYS = [
     'body',
-    'alabaster_version',
-    'display_toc',
     'title',
     'sourcename',
-    'customsidebar',
-    'metatags',
     'current_page_name',
-    'next',
     'rellinks',
-    'meta',
-    'parents',
-    'sidebars',
     'toc',
-    'prev',
     'page_source_suffix',
 ]
 
