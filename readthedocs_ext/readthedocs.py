@@ -157,9 +157,9 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
     """
     try:
         # We need to get the output directory where the docs are built
-        # _build/html/_json.
+        # _build/json.
         build_json = os.path.abspath(
-            os.path.join(app.outdir, '_json')
+            os.path.join(app.outdir, '..', 'json')
         )
         outjson = os.path.join(build_json, pagename + '.fjson')
         outdir = os.path.dirname(outjson)
@@ -172,7 +172,6 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
                 if key in context
             }
             json_file.write(json.dumps(to_context, indent=4))
-            log.info('{page} processed.'.format(page=outjson))
     except Exception:
         log.exception(
             'Failure in JSON search dump for {page}'.format(page=outjson)

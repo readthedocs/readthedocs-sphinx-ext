@@ -65,6 +65,6 @@ class IntegrationTests(LanguageIntegrationTests):
     def test_generate_json_artifacts(self):
         self._run_test(
             'pyexample',
-            '_build/html/_json/index.fjson',
+            '_build/json/index.fjson',
             ['current_page_name', 'title', 'body', 'toc'],
         )
