@@ -172,9 +172,17 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
                 if key in context
             }
             json_file.write(json.dumps(to_context, indent=4))
-    except Exception:
+    except TypeError:
         log.exception(
-            'Failure in JSON search dump for {page}'.format(page=outjson)
+            'Fail to encode JSON for page {page}'.format(page=outjson)
+        )
+    except IOError:
+        log.exception(
+            'Fail to save JSON output for page {page}'.format(page=outjson)
+        )
+    except Exception as e:
+        log.exception(
+            'Failure in JSON search dump for page {page}'.format(page=outjson)
         )
 
 
