@@ -156,6 +156,8 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
     This way we can skip generating this in other build step.
     """
     try:
+        if not app.config.rtd_generate_json_artifacts:
+            return
         # We need to get the output directory where the docs are built
         # _build/json.
         build_json = os.path.abspath(
@@ -280,5 +282,6 @@ def setup(app):
     app.add_config_value('readthedocs_embed_project', '', 'html')
     app.add_config_value('readthedocs_embed_version', '', 'html')
     app.add_config_value('readthedocs_embed_doc', '', 'html')
+    app.add_config_value('rtd_generate_json_artifacts', False, 'html')
 
     return {}
