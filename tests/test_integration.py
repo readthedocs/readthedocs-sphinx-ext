@@ -64,7 +64,19 @@ class IntegrationTests(LanguageIntegrationTests):
 
     def test_generate_json_artifacts(self):
         self._run_test(
-            'pyexample',
+            'pyexample-json',
             '_build/json/index.fjson',
             ['current_page_name', 'title', 'body', 'toc'],
+        )
+
+    def test_no_generate_json_artifacts(self):
+        with self.assertRaises(IOError) as e:
+            self._run_test(
+                'pyexample',
+                '_build/json/index.fjson',
+                ['current_page_name', 'title', 'body', 'toc'],
+            )
+        self.assertIn(
+            "No such file or directory: '_build/json/index.fjson'",
+            str(e.exception)
         )
