@@ -169,11 +169,10 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
             os.makedirs(outdir)
         with open(outjson, 'w+') as json_file:
             to_context = {
-                key: context[key]
+                key: context.get(key, '')
                 for key in KEYS
-                if key in context
             }
-            json_file.write(json.dumps(to_context, indent=4))
+            json.dump(to_context, json_file, indent=4)
     except TypeError:
         log.exception(
             'Fail to encode JSON for page {page}'.format(page=outjson)
