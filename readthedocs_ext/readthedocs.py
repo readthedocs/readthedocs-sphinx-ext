@@ -3,6 +3,7 @@
 from __future__ import absolute_import
 
 import codecs
+import json
 import os
 import re
 import types
@@ -10,17 +11,39 @@ from distutils.version import LooseVersion
 
 import sphinx
 from sphinx import package_dir
-from sphinx.builders.html import StandaloneHTMLBuilder, DirectoryHTMLBuilder, SingleFileHTMLBuilder
+from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
+                                  StandaloneHTMLBuilder)
 from sphinx.util.console import bold
 
 from .embed import EmbedDirective
 from .mixins import BuilderMixin
+
+try:
+    # Avaliable from Sphinx 1.6
+    from sphinx.util.logging import getLogger
+except ImportError:
+    from logging import getLogger
+
+log = getLogger(__name__)
 
 MEDIA_MAPPING = {
     "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
     "_static/underscore.js": "%sjavascript/underscore.js",
     "_static/doctools.js": "%sjavascript/doctools.js",
 }
+
+
+# Whitelist keys that we want to output
+# to the json artifacts.
+KEYS = [
+    'body',
+    'title',
+    'sourcename',
+    'current_page_name',
+    'rellinks',
+    'toc',
+    'page_source_suffix',
+]
 
 
 def finalize_media(app):
@@ -126,6 +149,44 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
+def generate_json_artifacts(app, pagename, templatename, context, doctree):
+    """
+    Generate JSON artifacts for each page.
+
+    This way we can skip generating this in other build step.
+    """
+    try:
+        if not app.config.rtd_generate_json_artifacts:
+            return
+        # We need to get the output directory where the docs are built
+        # _build/json.
+        build_json = os.path.abspath(
+            os.path.join(app.outdir, '..', 'json')
+        )
+        outjson = os.path.join(build_json, pagename + '.fjson')
+        outdir = os.path.dirname(outjson)
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        with open(outjson, 'w+') as json_file:
+            to_context = {
+                key: context.get(key, '')
+                for key in KEYS
+            }
+            json.dump(to_context, json_file, indent=4)
+    except TypeError:
+        log.exception(
+            'Fail to encode JSON for page {page}'.format(page=outjson)
+        )
+    except IOError:
+        log.exception(
+            'Fail to save JSON output for page {page}'.format(page=outjson)
+        )
+    except Exception as e:
+        log.exception(
+            'Failure in JSON search dump for page {page}'.format(page=outjson)
+        )
+
+
 class HtmlBuilderMixin(BuilderMixin):
 
     static_readthedocs_files = [
@@ -213,11 +274,13 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
     app.connect('html-page-context', update_body)
+    app.connect('html-page-context', generate_json_artifacts)
 
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
     app.add_config_value('readthedocs_embed_project', '', 'html')
     app.add_config_value('readthedocs_embed_version', '', 'html')
     app.add_config_value('readthedocs_embed_doc', '', 'html')
+    app.add_config_value('rtd_generate_json_artifacts', False, 'html')
 
     return {}

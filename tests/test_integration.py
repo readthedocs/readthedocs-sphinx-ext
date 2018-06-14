@@ -9,7 +9,12 @@ class LanguageIntegrationTests(unittest.TestCase):
 
     def _run_test(self, test_dir, test_file, test_string, builder='html'):
         with build_output(test_dir, test_file, builder) as data:
-            self.assertIn(test_string, data)
+            if not isinstance(test_string, list):
+                test_strings = [test_string]
+            else:
+                test_strings = test_string
+            for string in test_strings:
+                self.assertIn(string, data)
 
 
 class IntegrationTests(LanguageIntegrationTests):
@@ -56,3 +61,25 @@ class IntegrationTests(LanguageIntegrationTests):
                 HtmlBuilderMixin.REPLACEMENT_PATTERN
             )
             self.assertIn(HtmlBuilderMixin.REPLACEMENT_TEXT, data)
+
+    def test_generate_json_artifacts(self):
+        self._run_test(
+            'pyexample-json',
+            '_build/json/index.fjson',
+            [
+                'current_page_name', 'title', 'body',
+                'toc', 'sourcename', 'rellinks', 'page_source_suffix',
+            ],
+        )
+
+    def test_no_generate_json_artifacts(self):
+        with self.assertRaises(IOError) as e:
+            self._run_test(
+                'pyexample',
+                '_build/json/index.fjson',
+                ['current_page_name', 'title', 'body', 'toc'],
+            )
+        self.assertIn(
+            "No such file or directory: '_build/json/index.fjson'",
+            str(e.exception)
+        )
