@@ -68,7 +68,7 @@ class IntegrationTests(LanguageIntegrationTests):
             '_build/json/index.fjson',
             [
                 'current_page_name', 'title', 'body',
-                'toc', 'sourcename', 'rellinks', 'page_source_suffix',
+                'toc', 'sourcename', 'page_source_suffix',
             ],
         )
 
