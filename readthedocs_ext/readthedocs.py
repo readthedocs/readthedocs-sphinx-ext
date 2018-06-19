@@ -40,7 +40,6 @@ KEYS = [
     'title',
     'sourcename',
     'current_page_name',
-    'rellinks',
     'toc',
     'page_source_suffix',
 ]
