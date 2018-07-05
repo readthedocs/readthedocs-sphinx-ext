@@ -11,6 +11,7 @@ var READTHEDOCS_DATA = {
     source_suffix: "{{ source_suffix }}",
     api_host: "{{ api_host }}",
     commit: "{{ commit }}",
+    ad_free: {% if ad_free %}true{% else %}false{% endif %},
 
     global_analytics_code: {% if global_analytics_code %}'{{ global_analytics_code }}'{% else %}null{% endif %},
     user_analytics_code: {% if user_analytics_code %}'{{ user_analytics_code }}'{% else %}null{% endif %}
