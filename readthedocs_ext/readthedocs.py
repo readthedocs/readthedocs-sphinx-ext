@@ -154,6 +154,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
 
     This way we can skip generating this in other build step.
     """
+    import ipdb; ipdb.set_trace()
     try:
         if not app.config.rtd_generate_json_artifacts:
             return
