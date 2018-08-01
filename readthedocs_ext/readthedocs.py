@@ -13,7 +13,9 @@ import sphinx
 from sphinx import package_dir
 from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
                                   StandaloneHTMLBuilder)
+from sphinx.util import rpartition
 from sphinx.util.console import bold
+
 
 from .embed import EmbedDirective
 from .mixins import BuilderMixin
@@ -148,13 +150,33 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
+def geneate_search_objects(app, env)
+    import ipdb
+    ipdb.set_trace()
+    domain_objects = {}
+    for domainname, domain in sorted(app.env.domains.items()):
+        for fullname, dispname, type, docname, anchor, prio in \
+                sorted(domain.get_objects()):
+            if prio < 0:
+                continue
+            prefix, name = rpartition(fullname, '.')
+            domain_obj = domain_objects.setdefault(docname, {})
+            if anchor == fullname:
+                shortanchor = ''  # type: unicode
+            elif anchor == type + '-' + fullname:
+                shortanchor = '-'
+            else:
+                shortanchor = anchor
+            domain_obj[name] = (domainname, type, prefix, shortanchor)
+    env.rtd_domain_objects = domain_objects
+
+
 def generate_json_artifacts(app, pagename, templatename, context, doctree):
     """
     Generate JSON artifacts for each page.
 
     This way we can skip generating this in other build step.
     """
-    import ipdb; ipdb.set_trace()
     try:
         if not app.config.rtd_generate_json_artifacts:
             return
@@ -172,6 +194,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
                 key: context.get(key, '')
                 for key in KEYS
             }
+            to_context['objects'] = env.rtd_domain_objects.get(pagename, {})
             json.dump(to_context, json_file, indent=4)
     except TypeError:
         log.exception(
@@ -181,7 +204,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         log.exception(
             'Fail to save JSON output for page {page}'.format(page=outjson)
         )
-    except Exception as e:
+    except Exception:
         log.exception(
             'Failure in JSON search dump for page {page}'.format(page=outjson)
         )
@@ -273,6 +296,7 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
+    app.connect('env-updated', geneate_search_objects)
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
 
