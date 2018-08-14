@@ -34,7 +34,6 @@ MEDIA_MAPPING = {
 
 DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
 
-
 # Whitelist keys that we want to output
 # to the json artifacts.
 KEYS = [
