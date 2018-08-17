@@ -150,9 +150,7 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
-def geneate_search_objects(app, env)
-    import ipdb
-    ipdb.set_trace()
+def geneate_search_objects(app, env):
     domain_objects = {}
     for domainname, domain in sorted(app.env.domains.items()):
         for fullname, dispname, type, docname, anchor, prio in \
@@ -194,7 +192,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
                 key: context.get(key, '')
                 for key in KEYS
             }
-            to_context['objects'] = env.rtd_domain_objects.get(pagename, {})
+            to_context['objects'] = app.env.rtd_domain_objects.get(pagename, {})
             json.dump(to_context, json_file, indent=4)
     except TypeError:
         log.exception(
