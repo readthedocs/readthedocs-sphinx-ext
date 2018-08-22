@@ -22,4 +22,3 @@ todo_include_todos = False
 html_theme = 'alabaster'
 html_static_path = ['_static']
 htmlhelp_basename = 'pyexampledoc'
-rtd_generate_json_artifacts = True
