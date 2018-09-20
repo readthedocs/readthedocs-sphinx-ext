@@ -139,7 +139,7 @@ def update_body(app, pagename, templatename, context, doctree):
             if end_body != -1:
                 content = content[:end_body] + rtd_content + "\n" + content[end_body:]
             else:
-                app.debug("File doesn't look like HTML. Skipping RTD content addition")
+                log.debug("File doesn't look like HTML. Skipping RTD content addition")
 
             return content
 
@@ -219,7 +219,7 @@ class HtmlBuilderMixin(BuilderMixin):
         remove automatic initialization. This is a fork of
         ``sphinx.util.fileutil.copy_asset``
         """
-        self.app.info(bold('copying searchtools... '), nonl=True)
+        log.info(bold('copying searchtools... '), nonl=True)
 
         path_src = os.path.join(package_dir, 'themes', 'basic', 'static',
                                 'searchtools.js_t')
@@ -244,8 +244,8 @@ class HtmlBuilderMixin(BuilderMixin):
                         self.get_static_readthedocs_context()
                     ))
         else:
-            self.app.warn('Missing searchtools.js_t')
-        self.app.info('done')
+            log.warning('Missing searchtools.js_t')
+        log.info('done')
 
 
 class ReadtheDocsBuilder(HtmlBuilderMixin, StandaloneHTMLBuilder):
