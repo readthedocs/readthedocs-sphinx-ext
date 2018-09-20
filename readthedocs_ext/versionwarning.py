@@ -21,6 +21,14 @@ from collections import defaultdict
 from sphinx.util.console import red, bold
 from docutils import nodes
 
+try:
+    # Avaliable from Sphinx 1.6
+    from sphinx.util.logging import getLogger
+except ImportError:
+    from logging import getLogger
+
+log = getLogger(__name__)
+
 
 def process_meta(app, doctree, fromdocname):
     env = app.builder.env
@@ -49,7 +57,7 @@ def process_meta(app, doctree, fromdocname):
                         warning = nodes.warning(prose, prose)
                         doctree.insert(0, warning)
                     if app.config['versionwarning-console']:
-                        app.warn(bold('[Version Warning: %s] ' % pagename) + red(text))
+                        log.warning(bold('[Version Warning: %s] ' % pagename) + red(text))
 
 
 def setup(app):
