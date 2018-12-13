@@ -31,7 +31,7 @@ class IntegrationTests(LanguageIntegrationTests):
         self._run_test(
             'pyexample',
             '_build/readthedocs/index.html',
-            'media.readthedocs.org',
+            'assets.readthedocs.org',
             builder='readthedocs',
         )
 

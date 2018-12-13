@@ -32,6 +32,7 @@ MEDIA_MAPPING = {
     "_static/doctools.js": "%sjavascript/doctools.js",
 }
 
+DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
 
 # Whitelist keys that we want to output
 # to the json artifacts.
@@ -54,18 +55,18 @@ def finalize_media(app):
         return  # Use local media for downloadable files
     # Pull project data from conf.py if it exists
     context = app.builder.config.html_context
-    MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
+    STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
 
     # Put in our media files instead of putting them in the docs.
     for index, file in enumerate(app.builder.script_files):
         if file in MEDIA_MAPPING.keys():
-            app.builder.script_files[index] = MEDIA_MAPPING[file] % MEDIA_URL
+            app.builder.script_files[index] = MEDIA_MAPPING[file] % STATIC_URL
             if file == "_static/jquery.js":
                 app.builder.script_files.insert(
-                    index + 1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % MEDIA_URL)
+                    index + 1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % STATIC_URL)
 
     app.builder.script_files.append(
-        '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
+        '%sjavascript/readthedocs-doc-embed.js' % STATIC_URL
     )
 
 
@@ -76,7 +77,7 @@ def update_body(app, pagename, templatename, context, doctree):
     This is the most reliable way to inject our content into the page.
     """
 
-    MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
+    STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '_static/css/theme.css'
@@ -84,9 +85,9 @@ def update_body(app, pagename, templatename, context, doctree):
             theme_css = '_static/css/badge_only.css'
     elif app.builder.name in ['readthedocs', 'readthedocsdirhtml']:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-            theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
+            theme_css = '%scss/sphinx_rtd_theme.css' % STATIC_URL
         else:
-            theme_css = '%scss/badge_only.css' % MEDIA_URL
+            theme_css = '%scss/badge_only.css' % STATIC_URL
     else:
         # Only insert on our HTML builds
         return
@@ -119,9 +120,9 @@ def update_body(app, pagename, templatename, context, doctree):
             """
             # Render Read the Docs content
             template_context = render_context.copy()
-            template_context['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(MEDIA_URL)
+            template_context['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(STATIC_URL)
             template_context['rtd_analytics_url'] = '{}javascript/readthedocs-analytics.js'.format(
-                MEDIA_URL,
+                STATIC_URL,
             )
             source = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
