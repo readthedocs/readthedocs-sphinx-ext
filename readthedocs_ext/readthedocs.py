@@ -26,11 +26,6 @@ except ImportError:
 
 log = getLogger(__name__)
 
-MEDIA_MAPPING = {
-    "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
-    "_static/underscore.js": "%sjavascript/underscore.js",
-    "_static/doctools.js": "%sjavascript/doctools.js",
-}
 
 
 # Whitelist keys that we want to output
@@ -55,14 +50,6 @@ def finalize_media(app):
     # Pull project data from conf.py if it exists
     context = app.builder.config.html_context
     MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
-
-    # Put in our media files instead of putting them in the docs.
-    for index, file in enumerate(app.builder.script_files):
-        if file in MEDIA_MAPPING.keys():
-            app.builder.script_files[index] = MEDIA_MAPPING[file] % MEDIA_URL
-            if file == "_static/jquery.js":
-                app.builder.script_files.insert(
-                    index + 1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % MEDIA_URL)
 
     app.builder.script_files.append(
         '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
