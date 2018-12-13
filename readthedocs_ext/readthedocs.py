@@ -26,8 +26,6 @@ except ImportError:
 
 log = getLogger(__name__)
 
-
-
 # Whitelist keys that we want to output
 # to the json artifacts.
 KEYS = [
