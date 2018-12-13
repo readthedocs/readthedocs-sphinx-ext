@@ -26,12 +26,6 @@ except ImportError:
 
 log = getLogger(__name__)
 
-MEDIA_MAPPING = {
-    "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
-    "_static/underscore.js": "%sjavascript/underscore.js",
-    "_static/doctools.js": "%sjavascript/doctools.js",
-}
-
 DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
 
 # Whitelist keys that we want to output
