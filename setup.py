@@ -10,7 +10,7 @@ except ImportError:
 
 setup(
     name='readthedocs-sphinx-ext',
-    version='0.5.15',
+    version='0.5.16',
     author='Read the Docs, Inc',
     author_email='dev@readthedocs.com',
     url='http://github.com/rtfd/readthedocs-sphinx-ext',
