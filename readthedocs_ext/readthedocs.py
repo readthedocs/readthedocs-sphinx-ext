@@ -208,8 +208,13 @@ class HtmlBuilderMixin(BuilderMixin):
         """
         log.info(bold('copying searchtools... '), nonl=True)
 
-        path_src = os.path.join(package_dir, 'themes', 'basic', 'static',
-                                'searchtools.js_t')
+        if sphinx.version_info < (1, 8):
+            search_js_file = 'searchtools.js_t'
+        else:
+            search_js_file = 'searchtools.js'
+        path_src = os.path.join(
+            package_dir, 'themes', 'basic', 'static', search_js_file
+        )
         if os.path.exists(path_src):
             path_dest = os.path.join(self.outdir, '_static', 'searchtools.js')
             if renderer is None:
@@ -231,7 +236,7 @@ class HtmlBuilderMixin(BuilderMixin):
                         self.get_static_readthedocs_context()
                     ))
         else:
-            log.warning('Missing searchtools.js_t')
+            log.warning('Missing {}'.format(search_js_file))
         log.info('done')
 
 
