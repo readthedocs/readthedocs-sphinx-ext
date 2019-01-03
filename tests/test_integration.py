@@ -46,17 +46,17 @@ class IntegrationTests(LanguageIntegrationTests):
     def test_replacement_pattern(self):
         pattern = HtmlBuilderMixin.REPLACEMENT_PATTERN
         src = "$(document).ready(function() {\n  Search.init();\n});"
-        self.assertRegex(src, pattern)
+        self.assertRegexpMatches(src, pattern)
         # Minor changes to spacing, just to ensure rule is correct. This should
         # never happen as this block of code is 10 years old
         src = "$(document).ready(function    ()     {\n    Search.init();\n});"
-        self.assertRegex(src, pattern)
+        self.assertRegexpMatches(src, pattern)
 
     def test_searchtools_is_patched(self):
         with build_output('pyexample', '_build/readthedocs/_static/searchtools.js',
                           builder='readthedocs') as data:
             self.assertNotIn('Search.init();', data)
-            self.assertNotRegex(
+            self.assertNotRegexpMatches(
                 data,
                 HtmlBuilderMixin.REPLACEMENT_PATTERN
             )
