@@ -50,10 +50,11 @@ def finalize_media(app):
     # Pull project data from conf.py if it exists
     context = app.builder.config.html_context
     STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
-
-    app.builder.script_files.append(
-        '%sjavascript/readthedocs-doc-embed.js' % STATIC_URL
-    )
+    js_file = '{}javascript/readthedocs-doc-embed.js'.format(STATIC_URL)
+    if sphinx.version_info < (1, 8):
+        app.builder.script_files.append(js_file)
+    else:
+        app.add_js_file(js_file)
 
 
 def update_body(app, pagename, templatename, context, doctree):
@@ -90,7 +91,10 @@ def update_body(app, pagename, templatename, context, doctree):
             pass
 
     if inject_css and theme_css not in app.builder.css_files:
-        app.builder.css_files.insert(0, theme_css)
+        if sphinx.version_info < (1, 8):
+            app.builder.css_files.insert(0, theme_css)
+        else:
+            app.add_css_file(theme_css)
 
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
