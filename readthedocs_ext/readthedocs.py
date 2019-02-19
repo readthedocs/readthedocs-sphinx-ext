@@ -41,7 +41,7 @@ KEYS = [
 
 
 def finalize_media(app):
-    """ Point media files at our media server. """
+    """Point media files at our media server."""
 
     if (app.builder.name == 'readthedocssinglehtmllocalmedia' or
             app.builder.format != 'html' or
@@ -65,12 +65,15 @@ def update_body(app, pagename, templatename, context, doctree):
     """
 
     STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
+    online_builders = [
+        'readthedocs', 'readthedocsdirhtml', 'readthedocssinglehtml'
+    ]
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '_static/css/theme.css'
         else:
             theme_css = '_static/css/badge_only.css'
-    elif app.builder.name in ['readthedocs', 'readthedocsdirhtml']:
+    elif app.builder.name in online_builders:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '%scss/sphinx_rtd_theme.css' % STATIC_URL
         else:
