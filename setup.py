@@ -14,7 +14,7 @@ setup(
     author='Read the Docs, Inc',
     author_email='dev@readthedocs.com',
     url='http://github.com/rtfd/readthedocs-sphinx-ext',
-    license='BSD',
+    license='MIT',
     description='Sphinx extension for Read the Docs overrides',
     package_dir={'': '.'},
     packages=find_packages('.'),
