@@ -9,6 +9,14 @@ if sphinx.version_info < (1, 5):
 else:
     from sphinx.util.fileutil import copy_asset
 
+try:
+    # Avaliable from Sphinx 1.6
+    from sphinx.util.logging import getLogger
+except ImportError:
+    from logging import getLogger
+
+log = getLogger(__name__)
+
 
 class BuilderMixin(object):  # pylint: disable=old-style-class
 
@@ -25,7 +33,7 @@ class BuilderMixin(object):  # pylint: disable=old-style-class
         return self.globalcontext.copy()
 
     def copy_static_readthedocs_files(self):
-        self.app.info(bold('copying readthedocs static files... '), nonl=True)
+        log.info(bold('copying readthedocs static files... '), nonl=True)
         for filename in self.static_readthedocs_files:
             path_dest = os.path.join(self.outdir, '_static')
             path_src = os.path.join(
@@ -48,7 +56,7 @@ class BuilderMixin(object):  # pylint: disable=old-style-class
                     context=ctx,
                     renderer=self.templates
                 )
-        self.app.info('done')
+        log.info('done')
 
     def copy_static_files(self):
         """Copy Read the Docs specific files after initial static pass

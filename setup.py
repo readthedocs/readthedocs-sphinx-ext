@@ -10,12 +10,12 @@ except ImportError:
 
 setup(
     name='readthedocs-sphinx-ext',
-    version='0.5.14',
-    author='Eric Holscher',
-    author_email='eric@ericholscher.com',
-    url='http://github.com/ericholscher/readthedocs-sphinx-ext',
-    license='BSD',
-    description='Improved Client for Sphinx.',
+    version='0.5.17',
+    author='Read the Docs, Inc',
+    author_email='dev@readthedocs.com',
+    url='http://github.com/rtfd/readthedocs-sphinx-ext',
+    license='MIT',
+    description='Sphinx extension for Read the Docs overrides',
     package_dir={'': '.'},
     packages=find_packages('.'),
     long_description=codecs.open("README.rst", "r", "utf-8").read(),

@@ -2,4 +2,6 @@ recursive-include readthedocs_ext *.css
 recursive-include readthedocs_ext *.js_t
 recursive-include readthedocs_ext *.js
 recursive-include readthedocs_ext *.tmpl
+recursive-include tests *.py
+recursive-include tests *.rst
 include *.rst

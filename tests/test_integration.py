@@ -31,7 +31,7 @@ class IntegrationTests(LanguageIntegrationTests):
         self._run_test(
             'pyexample',
             '_build/readthedocs/index.html',
-            'media.readthedocs.org',
+            'assets.readthedocs.org',
             builder='readthedocs',
         )
 
@@ -70,16 +70,4 @@ class IntegrationTests(LanguageIntegrationTests):
                 'current_page_name', 'title', 'body',
                 'toc', 'sourcename', 'page_source_suffix',
             ],
-        )
-
-    def test_no_generate_json_artifacts(self):
-        with self.assertRaises(IOError) as e:
-            self._run_test(
-                'pyexample',
-                '_build/json/index.fjson',
-                ['current_page_name', 'title', 'body', 'toc'],
-            )
-        self.assertIn(
-            "No such file or directory: '_build/json/index.fjson'",
-            str(e.exception)
         )

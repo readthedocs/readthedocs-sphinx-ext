@@ -28,12 +28,10 @@ except ImportError:
 
 log = getLogger(__name__)
 
-MEDIA_MAPPING = {
-    "_static/jquery.js": "%sjavascript/jquery/jquery-2.0.3.min.js",
-    "_static/underscore.js": "%sjavascript/underscore.js",
-    "_static/doctools.js": "%sjavascript/doctools.js",
-}
-
+DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
+ONLINE_BUILDERS = [
+    'readthedocs', 'readthedocsdirhtml', 'readthedocssinglehtml'
+]
 
 # Whitelist keys that we want to output
 # to the json artifacts.
@@ -48,7 +46,7 @@ KEYS = [
 
 
 def finalize_media(app):
-    """ Point media files at our media server. """
+    """Point media files at our media server."""
 
     if (app.builder.name == 'readthedocssinglehtmllocalmedia' or
             app.builder.format != 'html' or
@@ -56,19 +54,12 @@ def finalize_media(app):
         return  # Use local media for downloadable files
     # Pull project data from conf.py if it exists
     context = app.builder.config.html_context
-    MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
-
-    # Put in our media files instead of putting them in the docs.
-    for index, file in enumerate(app.builder.script_files):
-        if file in MEDIA_MAPPING.keys():
-            app.builder.script_files[index] = MEDIA_MAPPING[file] % MEDIA_URL
-            if file == "_static/jquery.js":
-                app.builder.script_files.insert(
-                    index + 1, "%sjavascript/jquery/jquery-migrate-1.2.1.min.js" % MEDIA_URL)
-
-    app.builder.script_files.append(
-        '%sjavascript/readthedocs-doc-embed.js' % MEDIA_URL
-    )
+    STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
+    js_file = '{}javascript/readthedocs-doc-embed.js'.format(STATIC_URL)
+    if sphinx.version_info < (1, 8):
+        app.builder.script_files.append(js_file)
+    else:
+        app.add_js_file(js_file)
 
 
 def update_body(app, pagename, templatename, context, doctree):
@@ -78,17 +69,17 @@ def update_body(app, pagename, templatename, context, doctree):
     This is the most reliable way to inject our content into the page.
     """
 
-    MEDIA_URL = context.get('MEDIA_URL', 'https://media.readthedocs.org/')
+    STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '_static/css/theme.css'
         else:
             theme_css = '_static/css/badge_only.css'
-    elif app.builder.name in ['readthedocs', 'readthedocsdirhtml']:
+    elif app.builder.name in ONLINE_BUILDERS:
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
-            theme_css = '%scss/sphinx_rtd_theme.css' % MEDIA_URL
+            theme_css = '%scss/sphinx_rtd_theme.css' % STATIC_URL
         else:
-            theme_css = '%scss/badge_only.css' % MEDIA_URL
+            theme_css = '%scss/badge_only.css' % STATIC_URL
     else:
         # Only insert on our HTML builds
         return
@@ -105,7 +96,10 @@ def update_body(app, pagename, templatename, context, doctree):
             pass
 
     if inject_css and theme_css not in app.builder.css_files:
-        app.builder.css_files.insert(0, theme_css)
+        if sphinx.version_info < (1, 8):
+            app.builder.css_files.insert(0, theme_css)
+        else:
+            app.add_css_file(theme_css)
 
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
@@ -121,9 +115,9 @@ def update_body(app, pagename, templatename, context, doctree):
             """
             # Render Read the Docs content
             template_context = render_context.copy()
-            template_context['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(MEDIA_URL)
+            template_context['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(STATIC_URL)
             template_context['rtd_analytics_url'] = '{}javascript/readthedocs-analytics.js'.format(
-                MEDIA_URL,
+                STATIC_URL,
             )
             source = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
@@ -141,7 +135,7 @@ def update_body(app, pagename, templatename, context, doctree):
             if end_body != -1:
                 content = content[:end_body] + rtd_content + "\n" + content[end_body:]
             else:
-                app.debug("File doesn't look like HTML. Skipping RTD content addition")
+                log.debug("File doesn't look like HTML. Skipping RTD content addition")
 
             return content
 
@@ -151,6 +145,10 @@ def update_body(app, pagename, templatename, context, doctree):
 
 
 def geneate_search_objects(app, env):
+    # Only run once during HTML build to keep filepaths correct
+    if app.builder.name not in ONLINE_BUILDERS[:1]:
+        return
+
     domain_objects = {}
     for domainname, domain in sorted(app.env.domains.items()):
         for fullname, dispname, type, docname, anchor, prio in \
@@ -175,9 +173,10 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
 
     This way we can skip generating this in other build step.
     """
+    # Only run once during HTML build to keep filepaths correct
+    if app.builder.name not in ONLINE_BUILDERS[:1]:
+        return
     try:
-        if not app.config.rtd_generate_json_artifacts:
-            return
         # We need to get the output directory where the docs are built
         # _build/json.
         build_json = os.path.abspath(
@@ -208,26 +207,41 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         )
 
 
-def dump_domain_data(app, exception):
+def dump_sphinx_data(app, exception):
     """
-    Dump the mapping of Domain objects to real names
-
-    # objtype index -> (domain, type, objname (localized))
+    Dump a bunch of additional Sphinx data that is useful during search indexing
     """
     try:
-        if not app.config.rtd_generate_json_artifacts or app.builder.indexer is None:
+        if app.builder.indexer is None:
             return
+
+        types = {}
+        for _domain, _type, _objname in app.builder.indexer._objnames.values():
+            key = "{}:{}".format(_domain, _type)
+            types[key] = _objname
+
+        titles = {}
+        for page, title in app.env.titles.items():
+            titles[app.builder.get_target_uri(page)] = title.astext()
+
+        paths = {}
+        for page, title in app.env.titles.items():
+            paths[app.builder.get_target_uri(page)] = app.env.doc2path(page, base=None)
+
+        to_dump = {
+            'types': types,
+            'titles': titles,
+            'paths': paths,
+        }
+
         # We need to get the output directory where the docs are built
         # _build/json.
         build_json = os.path.abspath(
             os.path.join(app.outdir, '..', 'json')
         )
-        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names' + '.fjson')
-        outdir = os.path.dirname(outjson)
-        if not os.path.exists(outdir):
-            os.makedirs(outdir)
+        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names' + '.json')
         with open(outjson, 'w+') as json_file:
-            json.dump(app.builder.indexer.get('_objnames', {}).values(), json_file, indent=4)
+            json.dump(to_dump, json_file, indent=4)
     except TypeError:
         log.exception(
             'Fail to encode JSON for object names'
@@ -277,10 +291,15 @@ class HtmlBuilderMixin(BuilderMixin):
         remove automatic initialization. This is a fork of
         ``sphinx.util.fileutil.copy_asset``
         """
-        self.app.info(bold('copying searchtools... '), nonl=True)
+        log.info(bold('copying searchtools... '), nonl=True)
 
-        path_src = os.path.join(package_dir, 'themes', 'basic', 'static',
-                                'searchtools.js_t')
+        if sphinx.version_info < (1, 8):
+            search_js_file = 'searchtools.js_t'
+        else:
+            search_js_file = 'searchtools.js'
+        path_src = os.path.join(
+            package_dir, 'themes', 'basic', 'static', search_js_file
+        )
         if os.path.exists(path_src):
             path_dest = os.path.join(self.outdir, '_static', 'searchtools.js')
             if renderer is None:
@@ -302,8 +321,8 @@ class HtmlBuilderMixin(BuilderMixin):
                         self.get_static_readthedocs_context()
                     ))
         else:
-            self.app.warn('Missing searchtools.js_t')
-        self.app.info('done')
+            log.warning('Missing {}'.format(search_js_file))
+        log.info('done')
 
 
 class ReadtheDocsBuilder(HtmlBuilderMixin, StandaloneHTMLBuilder):
@@ -331,7 +350,7 @@ def setup(app):
     app.connect('env-updated', geneate_search_objects)
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
-    app.connect('build-finished', dump_domain_data)
+    app.connect('build-finished', dump_sphinx_data)
 
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
