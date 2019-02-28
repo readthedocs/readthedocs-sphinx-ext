@@ -211,14 +211,14 @@ def dump_sphinx_data(app, exception):
     """
     Dump a bunch of additional Sphinx data that is useful during search indexing
     """
+    if app.builder.name not in ONLINE_BUILDERS[:1] or app.builder.indexer is None:
+        return
     try:
-        if app.builder.indexer is None:
-            return
-
         types = {}
-        for _domain, _type, _objname in app.builder.indexer._objnames.values():
-            key = "{}:{}".format(_domain, _type)
-            types[key] = _objname
+        for domain_name, domain_obj in app.env.domains.items():
+            for type_name, type_obj in domain_obj.object_types.items():
+                key = "{}:{}".format(domain_name, type_name)
+                types[key] = str(type_obj.lname)
 
         titles = {}
         for page, title in app.env.titles.items():
