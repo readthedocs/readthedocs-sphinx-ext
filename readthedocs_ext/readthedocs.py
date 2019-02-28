@@ -208,6 +208,40 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         )
 
 
+def dump_domain_data(app, exception):
+    """
+    Dump the mapping of Domain objects to real names
+
+    # objtype index -> (domain, type, objname (localized))
+    """
+    try:
+        if not app.config.rtd_generate_json_artifacts or app.builder.indexer is None:
+            return
+        # We need to get the output directory where the docs are built
+        # _build/json.
+        build_json = os.path.abspath(
+            os.path.join(app.outdir, '..', 'json')
+        )
+        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names' + '.fjson')
+        outdir = os.path.dirname(outjson)
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+        with open(outjson, 'w+') as json_file:
+            json.dump(app.builder.indexer.get('_objnames', {}).values(), json_file, indent=4)
+    except TypeError:
+        log.exception(
+            'Fail to encode JSON for object names'
+        )
+    except IOError:
+        log.exception(
+            'Fail to save JSON for object names'
+        )
+    except Exception:
+        log.exception(
+            'Failure in JSON search dump for object names'
+        )
+
+
 class HtmlBuilderMixin(BuilderMixin):
 
     static_readthedocs_files = [
@@ -297,6 +331,7 @@ def setup(app):
     app.connect('env-updated', geneate_search_objects)
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
+    app.connect('build-finished', dump_domain_data)
 
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
