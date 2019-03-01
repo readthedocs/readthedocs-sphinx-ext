@@ -13,7 +13,6 @@ import sphinx
 from sphinx import package_dir
 from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
                                   StandaloneHTMLBuilder)
-from sphinx.util import rpartition
 from sphinx.util.console import bold
 
 
@@ -31,6 +30,10 @@ log = getLogger(__name__)
 DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
 ONLINE_BUILDERS = [
     'readthedocs', 'readthedocsdirhtml', 'readthedocssinglehtml'
+]
+JSON_BUILDERS = [
+    'html', 'dirhtml',
+    'readthedocs', 'readthedocsdirhtml'
 ]
 
 # Whitelist keys that we want to output
@@ -144,29 +147,6 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
-def geneate_search_objects(app, env):
-    # Only run once during HTML build to keep filepaths correct
-    if app.builder.name not in ONLINE_BUILDERS[:1]:
-        return
-
-    domain_objects = {}
-    for domainname, domain in sorted(app.env.domains.items()):
-        for fullname, dispname, type, docname, anchor, prio in \
-                sorted(domain.get_objects()):
-            if prio < 0:
-                continue
-            prefix, name = rpartition(fullname, '.')
-            domain_obj = domain_objects.setdefault(docname, {})
-            if anchor == fullname:
-                shortanchor = ''  # type: unicode
-            elif anchor == type + '-' + fullname:
-                shortanchor = '-'
-            else:
-                shortanchor = anchor
-            domain_obj[name] = (domainname, type, prefix, shortanchor)
-    env.rtd_domain_objects = domain_objects
-
-
 def generate_json_artifacts(app, pagename, templatename, context, doctree):
     """
     Generate JSON artifacts for each page.
@@ -174,7 +154,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
     This way we can skip generating this in other build step.
     """
     # Only run once during HTML build to keep filepaths correct
-    if app.builder.name not in ONLINE_BUILDERS[:1]:
+    if app.builder.name not in JSON_BUILDERS:
         return
     try:
         # We need to get the output directory where the docs are built
@@ -191,7 +171,6 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
                 key: context.get(key, '')
                 for key in KEYS
             }
-            to_context['objects'] = app.env.rtd_domain_objects.get(pagename, {})
             json.dump(to_context, json_file, indent=4)
     except TypeError:
         log.exception(
@@ -211,7 +190,7 @@ def dump_sphinx_data(app, exception):
     """
     Dump a bunch of additional Sphinx data that is useful during search indexing
     """
-    if app.builder.name not in ONLINE_BUILDERS[:1] or app.builder.indexer is None:
+    if app.builder.name not in JSON_BUILDERS or app.builder.indexer is None:
         return
     try:
         types = {}
@@ -347,7 +326,6 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
-    app.connect('env-updated', geneate_search_objects)
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
     app.connect('build-finished', dump_sphinx_data)
