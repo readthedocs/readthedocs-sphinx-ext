@@ -41,7 +41,7 @@ JSON_BUILDERS = [
 
 # Whitelist keys that we want to output
 # to the json artifacts.
-KEYS = [
+JSON_KEYS = [
     'body',
     'title',
     'sourcename',
@@ -171,7 +171,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         with open(outjson, 'w+') as json_file:
             to_context = {
                 key: context.get(key, '')
-                for key in KEYS
+                for key in JSON_KEYS
             }
             json.dump(to_context, json_file, indent=4)
     except TypeError:
