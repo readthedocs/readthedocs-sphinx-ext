@@ -31,6 +31,9 @@ DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
 ONLINE_BUILDERS = [
     'readthedocs', 'readthedocsdirhtml', 'readthedocssinglehtml'
 ]
+# Only run JSON output once during HTML build
+# This saves resources and keeps filepaths correct,
+# because singlehtml filepaths are different
 JSON_BUILDERS = [
     'html', 'dirhtml',
     'readthedocs', 'readthedocsdirhtml'
@@ -153,7 +156,6 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
 
     This way we can skip generating this in other build step.
     """
-    # Only run once during HTML build to keep filepaths correct
     if app.builder.name not in JSON_BUILDERS:
         return
     try:
