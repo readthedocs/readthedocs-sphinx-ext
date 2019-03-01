@@ -190,7 +190,7 @@ def dump_sphinx_data(app, exception):
     """
     Dump a bunch of additional Sphinx data that is useful during search indexing
     """
-    if app.builder.name not in JSON_BUILDERS or app.builder.indexer is None:
+    if app.builder.name not in JSON_BUILDERS:
         return
     try:
         types = {}
