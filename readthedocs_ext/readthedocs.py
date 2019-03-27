@@ -102,7 +102,10 @@ def update_body(app, pagename, templatename, context, doctree):
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
 
-    if not hasattr(app.builder.templates.render, '_patched'):
+    if (
+        app.builder.name in online_builders and not
+        hasattr(app.builder.templates.render, '_patched')
+    ):
         # Janky monkey patch of template rendering to add our content
         old_render = app.builder.templates.render
 
