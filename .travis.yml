@@ -7,6 +7,8 @@ matrix:
   include:
     - python: 2.7
       script: tox -e lint
+    - python: 3.7
+      dist: xenial
 install:
   - pip install tox-travis
 script:

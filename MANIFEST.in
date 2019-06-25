@@ -5,3 +5,4 @@ recursive-include readthedocs_ext *.tmpl
 recursive-include tests *.py
 recursive-include tests *.rst
 include *.rst
+include LICENSE

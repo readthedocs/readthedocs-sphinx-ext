@@ -71,3 +71,9 @@ class IntegrationTests(LanguageIntegrationTests):
                 'toc', 'sourcename', 'page_source_suffix',
             ],
         )
+
+    def test_escape_js_vars(self):
+        with build_output('pyexample', '_build/readthedocs/escape\' this js.html',
+                          builder='readthedocs') as data:
+            self.assertNotIn('escape \' this js', data)
+            self.assertIn('escape\\u0027 this js', data)
