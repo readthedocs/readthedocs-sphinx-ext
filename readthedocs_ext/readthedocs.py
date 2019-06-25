@@ -220,7 +220,7 @@ def dump_sphinx_data(app, exception):
         build_json = os.path.abspath(
             os.path.join(app.outdir, '..', 'json')
         )
-        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names' + '.json')
+        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names.json')
         with open(outjson, 'w+') as json_file:
             json.dump(to_dump, json_file, indent=4)
     except TypeError:

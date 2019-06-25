@@ -72,6 +72,16 @@ class IntegrationTests(LanguageIntegrationTests):
             ],
         )
 
+    def test_generate_json_domain_artifacts(self):
+        self._run_test(
+            'pyexample-json',
+            '_build/json/readthedocs-sphinx-domain-names.json',
+            [
+                'py:exception', 'js:class',
+                '''"index.html": "Welcome to pyexample''',
+            ],
+        )
+
     def test_escape_js_vars(self):
         with build_output('pyexample', '_build/readthedocs/escape\' this js.html',
                           builder='readthedocs') as data:
