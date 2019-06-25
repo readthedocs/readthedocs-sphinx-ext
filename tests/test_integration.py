@@ -78,7 +78,7 @@ class IntegrationTests(LanguageIntegrationTests):
             '_build/json/readthedocs-sphinx-domain-names.json',
             [
                 'py:exception', 'js:class',
-                '''"index.html": "Welcome to pyexample''',
+                '"index.html": "Welcome to pyexample',
             ],
         )
 
