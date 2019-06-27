@@ -213,8 +213,9 @@ def dump_sphinx_data(app, exception):
                 types[key] = str(type_obj.lname)
 
         for page, title in app.env.titles.items():
-            titles[app.builder.get_target_uri(page)] = title.astext()
-            paths[app.builder.get_target_uri(page)] = app.env.doc2path(page, base=None)
+            page_uri = app.builder.get_target_uri(page)
+            titles[page_uri] = title.astext()
+            paths[page_uri] = app.env.doc2path(page, base=None)
 
         to_dump = {
             'types': types,
