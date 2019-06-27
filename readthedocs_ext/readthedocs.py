@@ -195,7 +195,8 @@ def dump_sphinx_data(app, exception):
 
     This includes:
 
-    * `paths`: A mapping of rst file -> HTML filename
+    * `paths`: A mapping of HTML Filename -> RST file
+    * `pages`: A mapping of HTML Filename -> Sphinx Page name
     * `titles`: A mapping of HTML Filename -> Page Title
     * `types`: A mapping of Sphinx Domain type slugs -> human-readable name for that type
 
@@ -206,6 +207,7 @@ def dump_sphinx_data(app, exception):
         types = {}
         titles = {}
         paths = {}
+        pages = {}
 
         for domain_name, domain_obj in app.env.domains.items():
             for type_name, type_obj in domain_obj.object_types.items():
@@ -216,11 +218,13 @@ def dump_sphinx_data(app, exception):
             page_uri = app.builder.get_target_uri(page)
             titles[page_uri] = title.astext()
             paths[page_uri] = app.env.doc2path(page, base=None)
+            pages[page_uri] = page
 
         to_dump = {
             'types': types,
             'titles': titles,
             'paths': paths,
+            'pages': pages,
         }
 
         # We need to get the output directory where the docs are built
