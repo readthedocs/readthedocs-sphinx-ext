@@ -190,23 +190,30 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
 
 def dump_sphinx_data(app, exception):
     """
-    Dump a bunch of additional Sphinx data that is useful during search indexing
+    Dump data that is only in memory during Sphinx build.
+    This is mostly used for search indexing.
+
+    This includes:
+
+    * `paths`: A mapping of rst file -> HTML filename
+    * `titles`: A mapping of HTML Filename -> Page Title
+    * `types`: A mapping of Sphinx Domain type slugs -> human-readable name for that type
+
     """
-    if app.builder.name not in JSON_BUILDERS:
+    if app.builder.name not in JSON_BUILDERS or exception:
         return
     try:
         types = {}
+        titles = {}
+        paths = {}
+
         for domain_name, domain_obj in app.env.domains.items():
             for type_name, type_obj in domain_obj.object_types.items():
                 key = "{}:{}".format(domain_name, type_name)
                 types[key] = str(type_obj.lname)
 
-        titles = {}
         for page, title in app.env.titles.items():
             titles[app.builder.get_target_uri(page)] = title.astext()
-
-        paths = {}
-        for page, title in app.env.titles.items():
             paths[app.builder.get_target_uri(page)] = app.env.doc2path(page, base=None)
 
         to_dump = {
