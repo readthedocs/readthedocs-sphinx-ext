@@ -4,8 +4,8 @@ Read the Docs Sphinx Extensions
 .. image:: https://img.shields.io/pypi/v/readthedocs-sphinx-ext.svg
    :target: https://pypi.python.org/pypi/readthedocs-sphinx-ext
    :alt: Pypi Version 
-.. image:: https://travis-ci.org/rtfd/readthedocs-sphinx-ext.svg?branch=master
-   :target: https://travis-ci.org/rtfd/readthedocs-sphinx-ext
+.. image:: https://travis-ci.org/readthedocs/readthedocs-sphinx-ext.svg?branch=master
+   :target: https://travis-ci.org/readthedocs/readthedocs-sphinx-ext
    :alt: Build Status
 
 This module adds extensions that make Sphinx easier to use.
