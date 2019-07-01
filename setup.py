@@ -13,7 +13,7 @@ setup(
     version='0.6.0',
     author='Read the Docs, Inc',
     author_email='dev@readthedocs.com',
-    url='http://github.com/rtfd/readthedocs-sphinx-ext',
+    url='http://github.com/readthedocs/readthedocs-sphinx-ext',
     license='MIT',
     description='Sphinx extension for Read the Docs overrides',
     package_dir={'': '.'},
