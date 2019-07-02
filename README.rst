@@ -23,7 +23,7 @@ Releasing
 
 #. Increment the version in ``setup.py``
 #. Tag the release in git: ``git tag $NEW_VERSION``.
-#. Push the tag to GitHub: ``git push --tags origin``
+#. Push the tag to GitHub: ``git push --tags origin master``
 #. Upload the package to PyPI:
 
     .. code:: bash
