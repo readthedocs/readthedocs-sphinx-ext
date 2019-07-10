@@ -16,7 +16,7 @@ except ImportError:
 log = getLogger(__name__)
 
 
-def process_external_version_warning_banner(app, doctree):
+def process_external_version_warning_banner(app, doctree, fromdocname):
     for document in doctree.traverse(nodes.document):
         text = 'This is an External Version created from pull/merge request.'
         prose = nodes.paragraph(text, text)
