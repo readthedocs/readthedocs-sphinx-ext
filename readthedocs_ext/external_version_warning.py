@@ -16,7 +16,7 @@ except ImportError:
 log = getLogger(__name__)
 
 
-def process_meta(app, doctree):
+def process_external_version_warning_banner(app, doctree):
     for document in doctree.traverse(nodes.document):
         text = 'This is an External Version created from pull/merge request.'
         prose = nodes.paragraph(text, text)
@@ -25,4 +25,4 @@ def process_meta(app, doctree):
 
 
 def setup(app):
-    app.connect('doctree-resolved', process_meta)
+    app.connect('doctree-resolved', process_external_version_warning_banner)
