@@ -1,10 +1,3 @@
-"""
-Add the ability to warning banner for external versions in every page.
-
-If the version type is external this will show a warning banner
-at the top of each page of the documentation.
-"""
-
 from docutils import nodes
 
 try:
@@ -18,7 +11,7 @@ log = getLogger(__name__)
 
 def process_external_version_warning_banner(app, doctree, fromdocname):
     """
-    Add the ability to warning banner for external versions in every page.
+    Add warning banner for external versions in every page.
 
     If the version type is external this will show a warning banner
     at the top of each page of the documentation.
