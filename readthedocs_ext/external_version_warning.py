@@ -17,8 +17,14 @@ log = getLogger(__name__)
 
 
 def process_external_version_warning_banner(app, doctree, fromdocname):
+    """
+    Add the ability to warning banner for external versions in every page.
+
+    If the version type is external this will show a warning banner
+    at the top of each page of the documentation.
+    """
     for document in doctree.traverse(nodes.document):
-        text = 'This is an External Version created from pull/merge request.'
+        text = 'This Documentation was created from pull/merge request.'
         prose = nodes.paragraph(text, text)
         warning = nodes.warning(prose, prose)
         document.insert(0, warning)
