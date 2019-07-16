@@ -111,7 +111,7 @@ def update_body(app, pagename, templatename, context, doctree):
     # has done with their `app.builder.templates` before now.
 
     if (
-        app.builder.name in online_builders and not
+        app.builder.name in ONLINE_BUILDERS and not
         hasattr(app.builder.templates.render, '_patched')
     ):
         # Janky monkey patch of template rendering to add our content
