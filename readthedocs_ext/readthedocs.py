@@ -10,7 +10,7 @@ import types
 from distutils.version import LooseVersion
 
 import sphinx
-from sphinx import package_dir
+from sphinx import package_dir, addnodes
 from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
                                   StandaloneHTMLBuilder)
 from sphinx.util.console import bold
@@ -153,6 +153,14 @@ def update_body(app, pagename, templatename, context, doctree):
                                                         app.builder.templates)
 
 
+def _get_build_json_path(outdir):
+    """Returns the json output directory."""
+    build_json = os.path.abspath(
+        os.path.join(outdir, '..', 'json')
+    )
+    return build_json
+
+
 def generate_json_artifacts(app, pagename, templatename, context, doctree):
     """
     Generate JSON artifacts for each page.
@@ -164,9 +172,7 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
     try:
         # We need to get the output directory where the docs are built
         # _build/json.
-        build_json = os.path.abspath(
-            os.path.join(app.outdir, '..', 'json')
-        )
+        build_json = _get_build_json_path(app.outdir)
         outjson = os.path.join(build_json, pagename + '.fjson')
         outdir = os.path.dirname(outjson)
         if not os.path.exists(outdir):
@@ -188,6 +194,92 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
     except Exception:
         log.exception(
             'Failure in JSON search dump for page {page}'.format(page=outjson)
+        )
+
+
+def delete_sphinx_domain_json(app):
+    build_json = _get_build_json_path(app.outdir)
+    sphinx_data = os.path.join(build_json, 'readthedocs-sphinx-domain-data.json')
+
+    # delete sphinx_data file, if exists
+    if os.path.exists(sphinx_data):
+        os.remove(sphinx_data)
+
+
+def dump_sphinx_domains_data(app, pagename, templatename, context, doctree):
+    """
+    Extract relevant data from ``doctree`` of each page and dump in json file.
+    This is mostly used for search indexing.
+
+    The final output is in the following form::
+        {
+            sphinx-domain-id-1: {
+                content: sphinx domain docstrings 1
+                pagename: page-name-1
+            },
+            sphinx-domain-id-2: {
+                content: sphinx domain docstrings 2
+                pagename: page-name-2
+            }
+        }
+    """
+
+    if app.builder.name not in JSON_BUILDERS or not doctree:
+        return
+
+    try:
+        # We need to get the output directory where the docs are built
+        # _build/json.
+        build_json = _get_build_json_path(app.outdir)
+        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-data.json')
+
+        existing_data = {}
+        if os.path.exists(outjson):
+            with open(outjson, 'r', encoding='utf-8') as json_file:
+                existing_data = json.load(json_file)
+
+        data = {}
+        desc_nodes = (node for node in doctree.traverse() if isinstance(node, addnodes.desc))
+
+        for node in desc_nodes:
+            node_data = {}
+            for child in node.traverse():
+
+                if isinstance(child, addnodes.desc_signature):
+                    node_data['ids'] = child.get('ids')
+
+                elif isinstance(child, addnodes.desc_content):
+                    content = child.astext().split('\n')
+                    content = ' '.join((text.strip() for text in content if text))
+                    existing_content = node_data.setdefault('content', '')
+
+                    if existing_content:
+                        node_data['content'] = existing_content + ' ' + content
+                    else:
+                        node_data['content'] = content
+
+            ids = node_data.pop('ids', None)
+            if ids:
+                id_ = ids[0]  # ``ids`` is in the form of list
+                data[id_] = node_data
+                data[id_]['pagename'] = pagename
+
+        if data:
+            with open(outjson, 'w') as json_file:
+                existing_data.update(data)
+                json.dump(existing_data, json_file, indent=4)
+
+    except TypeError:
+        log.exception(
+            'Fail to encode JSON for sphinx domains'
+        )
+    except IOError:
+        log.exception(
+            'Fail to save JSON for sphinx domains'
+        )
+    except Exception:
+        log.exception(
+            'Failure in JSON search dump for sphinx domains'
         )
 
 
@@ -232,9 +324,7 @@ def dump_sphinx_data(app, exception):
 
         # We need to get the output directory where the docs are built
         # _build/json.
-        build_json = os.path.abspath(
-            os.path.join(app.outdir, '..', 'json')
-        )
+        build_json = _get_build_json_path(app.outdir)
         outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names.json')
         with open(outjson, 'w+') as json_file:
             json.dump(to_dump, json_file, indent=4)
@@ -343,8 +433,10 @@ def setup(app):
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
     app.connect('builder-inited', finalize_media)
+    app.connect('builder-inited', delete_sphinx_domain_json)
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
+    app.connect('html-page-context', dump_sphinx_domains_data)
     app.connect('build-finished', dump_sphinx_data)
 
     # Embed
