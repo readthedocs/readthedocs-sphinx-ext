@@ -1,22 +1,22 @@
 var READTHEDOCS_DATA = {
-    project: "{{ slug }}",
-    version: "{{ version_slug }}",
-    language: "{{ rtd_language }}",
-    programming_language: "{{ programming_language }}",
+    project: {{ slug|tojson }},
+    version: {{ version_slug|tojson }},
+    language: {{ rtd_language|tojson }},
+    programming_language: {{ programming_language|tojson }},
     subprojects: {},
-    canonical_url: "{{ canonical_url }}",
-    theme: "{{ html_theme }}",
+    canonical_url: {{ canonical_url|tojson }},
+    theme: {{ html_theme|tojson }},
     builder: "sphinx",
-    docroot: "{{ conf_py_path }}",
-    source_suffix: "{{ source_suffix }}",
-    api_host: "{{ api_host }}",
-    commit: "{{ commit }}",
+    docroot: {{ conf_py_path|tojson }},
+    source_suffix: {{ source_suffix|tojson }},
+    api_host: {{ api_host|tojson }},
+    commit: {{ commit|tojson }},
     ad_free: {% if ad_free %}true{% else %}false{% endif %},
 
-    global_analytics_code: {% if global_analytics_code %}'{{ global_analytics_code }}'{% else %}null{% endif %},
-    user_analytics_code: {% if user_analytics_code %}'{{ user_analytics_code }}'{% else %}null{% endif %}
+    global_analytics_code: {% if global_analytics_code %}{{ global_analytics_code|tojson }}{% else %}null{% endif %},
+    user_analytics_code: {% if user_analytics_code %}{{ user_analytics_code|tojson }}{% else %}null{% endif %}
 };
 
 {% for slug, url in subprojects %}
-READTHEDOCS_DATA.subprojects["{{ slug }}"] = "{{ url }}";
+READTHEDOCS_DATA.subprojects[{{ slug|tojson }}] = {{ url|tojson }};
 {% endfor %}
