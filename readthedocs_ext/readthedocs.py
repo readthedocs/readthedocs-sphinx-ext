@@ -65,7 +65,8 @@ def finalize_media(app):
     if sphinx.version_info < (1, 8):
         app.builder.script_files.append(js_file)
     else:
-        app.add_js_file(js_file)
+        kwargs = {'async': 'async'}     # Workaround reserved word in Py3.7
+        app.add_js_file(js_file, **kwargs)
 
 
 def update_body(app, pagename, templatename, context, doctree):
