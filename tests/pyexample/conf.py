@@ -22,3 +22,11 @@ todo_include_todos = False
 html_theme = 'alabaster'
 html_static_path = ['_static']
 htmlhelp_basename = 'pyexampledoc'
+
+html_context = {
+    'slug': 'test-slug',
+    'rtd_language': 'en',
+    'user_analytics_code': '',
+    'global_analytics_code': "malic''ious",
+    'commit': 'deadd00d',
+}

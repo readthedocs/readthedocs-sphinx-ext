@@ -93,3 +93,8 @@ class IntegrationTests(LanguageIntegrationTests):
                           builder='readthedocs') as data:
             self.assertNotIn('escape \' this js', data)
             self.assertIn('escape\\u0027 this js', data)
+
+        with build_output('pyexample', '_build/readthedocs/_static/readthedocs-data.js',
+                          builder='readthedocs') as data:
+            self.assertNotIn("malic''ious", data)
+            self.assertIn('malic\\u0027\\u0027ious', data)
