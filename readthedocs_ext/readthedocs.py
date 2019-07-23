@@ -213,14 +213,8 @@ def dump_sphinx_domains_data(app, pagename, templatename, context, doctree):
 
     The final output is in the following form::
         {
-            sphinx-domain-id-1: {
-                content: sphinx domain docstrings 1
-                pagename: page-name-1
-            },
-            sphinx-domain-id-2: {
-                content: sphinx domain docstrings 2
-                pagename: page-name-2
-            }
+            sphinx-domain-id-1: "docstrings for sphinx-domain-id-1"
+            sphinx-domain-id-2: "docstrings for sphinx-domain-id-2"
         }
     """
 
