@@ -242,27 +242,26 @@ def dump_sphinx_domains_data(app, pagename, templatename, context, doctree):
         desc_nodes = (node for node in doctree.traverse() if isinstance(node, addnodes.desc))
 
         for node in desc_nodes:
-            node_data = {}
+            temp_node_data = {}
             for child in node.traverse():
 
                 if isinstance(child, addnodes.desc_signature):
-                    node_data['ids'] = child.get('ids')
+                    temp_node_data['ids'] = child.get('ids')
 
                 elif isinstance(child, addnodes.desc_content):
                     content = child.astext().split('\n')
                     content = ' '.join((text.strip() for text in content if text))
-                    existing_content = node_data.setdefault('content', '')
+                    existing_content = temp_node_data.setdefault('content', '')
 
                     if existing_content:
-                        node_data['content'] = existing_content + ' ' + content
+                        temp_node_data['content'] = existing_content + ' ' + content
                     else:
-                        node_data['content'] = content
+                        temp_node_data['content'] = content
 
-            ids = node_data.pop('ids', None)
+            ids = temp_node_data.get('ids', None)
             if ids:
                 id_ = ids[0]  # ``ids`` is in the form of list
-                data[id_] = node_data
-                data[id_]['pagename'] = pagename
+                data[id_] = temp_node_data['content']
 
         if data:
             with open(outjson, 'w') as json_file:
