@@ -50,11 +50,8 @@ class BuilderMixin(object):  # pylint: disable=old-style-class
                     context=ctx,
                 )
             else:
-                if sphinx.version_info < (1, 5):
-                    renderer = self.templates
-                else:
-                    from sphinx.util.template import SphinxRenderer
-                    renderer = SphinxRenderer()
+                from sphinx.util.template import SphinxRenderer
+                renderer = SphinxRenderer()
 
                 copy_asset(
                     path_src,
