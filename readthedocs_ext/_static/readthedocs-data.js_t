@@ -7,19 +7,11 @@ var READTHEDOCS_DATA = {
     canonical_url: {{ canonical_url|default('')|tojson }},
     theme: {{ html_theme|default('')|tojson }},
     builder: "sphinx",
-<<<<<<< HEAD
     docroot: {{ conf_py_path|default('')|tojson }},
     source_suffix: {{ source_suffix|default('')|tojson }},
     api_host: {{ api_host|default('')|tojson }},
     proxied_api_host: {{ proxied_api_host|default('')|tojson }},
     commit: {{ commit|default('')|tojson }},
-=======
-    docroot: "{{ conf_py_path }}",
-    source_suffix: "{{ source_suffix }}",
-    api_host: "{{ api_host }}",
-    proxied_api_host: "{{ proxied_api_host }}",
-    commit: "{{ commit }}",
->>>>>>> Rename setting
     ad_free: {% if ad_free %}true{% else %}false{% endif %},
 
     global_analytics_code: {% if global_analytics_code %}{{ global_analytics_code|default('')|tojson }}{% else %}null{% endif %},
