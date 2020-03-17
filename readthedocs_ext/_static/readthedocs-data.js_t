@@ -10,7 +10,6 @@ var READTHEDOCS_DATA = {
     docroot: {{ conf_py_path|default('')|tojson }},
     source_suffix: {{ source_suffix|default('')|tojson }},
     api_host: {{ api_host|default('')|tojson }},
-    proxied_api_host: {{ proxied_api_host|default('')|tojson }},
     commit: {{ commit|default('')|tojson }},
     ad_free: {% if ad_free %}true{% else %}false{% endif %},
 
