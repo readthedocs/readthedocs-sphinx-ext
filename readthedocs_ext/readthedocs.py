@@ -11,8 +11,6 @@ from distutils.version import LooseVersion
 
 import sphinx
 from sphinx import package_dir
-from sphinx.builders.html import (DirectoryHTMLBuilder, SingleFileHTMLBuilder,
-                                  StandaloneHTMLBuilder)
 from sphinx.util.console import bold
 
 
@@ -24,6 +22,18 @@ try:
     from sphinx.util.logging import getLogger
 except ImportError:
     from logging import getLogger
+
+if sphinx.version_info < (3, 0, 0):
+    from sphinx.builders.html import (
+        DirectoryHTMLBuilder,
+        SingleFileHTMLBuilder,
+        StandaloneHTMLBuilder,
+    )
+else:
+    from sphinx.builders.dirhtml import DirectoryHTMLBuilder
+    from sphinx.builders.html import StandaloneHTMLBuilder
+    from sphinx.builders.singlehtml import SingleFileHTMLBuilder
+
 
 log = getLogger(__name__)
 
