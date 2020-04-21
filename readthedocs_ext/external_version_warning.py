@@ -19,7 +19,7 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
     for document in doctree.traverse(nodes.document):
         # TODO: Link to the Pull Request
         text = 'This page was created from a pull request.'
-        if app.html_context.get('display_gitlab'):
+        if app.builder.config.html_context.get('display_gitlab'):
             text = 'This page was created from a merge request.'
         prose = nodes.paragraph(text, text)
         warning = nodes.warning(prose, prose)
