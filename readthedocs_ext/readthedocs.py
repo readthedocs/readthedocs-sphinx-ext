@@ -15,7 +15,6 @@ from sphinx.util.console import bold
 
 
 from .embed import EmbedDirective
-from .mixins import BuilderMixin
 
 try:
     # Avaliable from Sphinx 1.6
@@ -25,26 +24,25 @@ except ImportError:
 
 try:
     # Available from Sphinx 2.0
-    from sphinx.builders.dirhtml import DirectoryHTMLBuilder
-    from sphinx.builders.html import StandaloneHTMLBuilder
     from sphinx.builders.singlehtml import SingleFileHTMLBuilder
 except ImportError:
-    from sphinx.builders.html import (DirectoryHTMLBuilder,
-                                      SingleFileHTMLBuilder,
-                                      StandaloneHTMLBuilder)
+    from sphinx.builders.html import SingleFileHTMLBuilder
 
 log = getLogger(__name__)
 
+
 DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
+
+# Exclude the SingleHTML builder that is used by RTD to zip up local media
+# That builder is never used "online"
 ONLINE_BUILDERS = [
-    'readthedocs', 'readthedocsdirhtml', 'readthedocssinglehtml'
+    'html', 'dirhtml', 'singlehtml'
 ]
 # Only run JSON output once during HTML build
 # This saves resources and keeps filepaths correct,
 # because singlehtml filepaths are different
 JSON_BUILDERS = [
     'html', 'dirhtml',
-    'readthedocs', 'readthedocsdirhtml'
 ]
 
 # Whitelist keys that we want to output
@@ -57,24 +55,6 @@ JSON_KEYS = [
     'toc',
     'page_source_suffix',
 ]
-
-
-def finalize_media(app):
-    """Point media files at our media server."""
-
-    if (app.builder.name == 'readthedocssinglehtmllocalmedia' or
-            app.builder.format != 'html' or
-            not hasattr(app.builder, 'script_files')):
-        return  # Use local media for downloadable files
-    # Pull project data from conf.py if it exists
-    context = app.builder.config.html_context
-    STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
-    js_file = '{}javascript/readthedocs-doc-embed.js'.format(STATIC_URL)
-    if sphinx.version_info < (1, 8):
-        app.builder.script_files.append(js_file)
-    else:
-        kwargs = {'async': 'async'}     # Workaround reserved word in Py3.7
-        app.add_js_file(js_file, **kwargs)
 
 
 def update_body(app, pagename, templatename, context, doctree):
@@ -132,18 +112,41 @@ def update_body(app, pagename, templatename, context, doctree):
             then adds the Read the Docs HTML content at the end of body.
             """
             # Render Read the Docs content
-            template_context = render_context.copy()
-            template_context['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(STATIC_URL)
-            template_context['rtd_analytics_url'] = '{}javascript/readthedocs-analytics.js'.format(
-                STATIC_URL,
-            )
+            ctx = render_context.copy()
+            ctx['rtd_data'] = {
+                'project': ctx.get('slug', ''),
+                'version': ctx.get('version_slug', ''),
+                'language': ctx.get('rtd_language', ''),
+                'programming_language': ctx.get('programming_language', ''),
+                'canonical_url': ctx.get('canonical_url', ''),
+                'theme': ctx.get('html_theme', ''),
+                'builder': 'sphinx',
+                'docroot': ctx.get('conf_py_path', ''),
+                'source_suffix': ctx.get('source_suffix', ''),
+                'page': ctx.get('pagename', ''),
+                'api_host': ctx.get('api_host', ''),
+                'commit': ctx.get('commit', ''),
+                'ad_free': ctx.get('ad_free', ''),
+                'global_analytics_code': ctx.get('global_analytics_code'),
+                'user_analytics_code': ctx.get('user_analytics_code'),
+                'subprojects': {
+                    slug: url for slug, url in ctx.get('subprojects', [])
+                },
+            }
+            if ctx.get('page_source_suffix'):
+                ctx['rtd_data']['source_suffix'] = ctx['page_source_suffix']
+            if ctx.get('proxied_api_host'):
+                ctx['rtd_data']['proxied_api_host'] = ctx['proxied_api_host']
+            ctx['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(STATIC_URL)
+            ctx['rtd_js_url'] = '{}javascript/readthedocs-doc-embed.js'.format(STATIC_URL)
+            ctx['rtd_analytics_url'] = '{}javascript/readthedocs-analytics.js'.format(STATIC_URL)
             source = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
                 '_templates',
                 'readthedocs-insert.html.tmpl'
             )
             templ = open(source).read()
-            rtd_content = app.builder.templates.render_string(templ, template_context)
+            rtd_content = app.builder.templates.render_string(templ, ctx)
 
             # Handle original render function
             content = old_render(template, render_context)
@@ -198,6 +201,34 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
         log.exception(
             'Failure in JSON search dump for page {page}'.format(page=outjson)
         )
+
+
+def remove_search_init(app, exception):
+    """Remove Sphinx's Search.init() so it can be initialized by Read the Docs."""
+    if exception:
+        return
+
+    searchtools_file = os.path.abspath(
+        os.path.join(app.outdir, '_static', 'searchtools.js')
+    )
+
+    if os.path.exists(searchtools_file):
+        replacement_text = '/* Search initialization removed for Read the Docs */'
+        replacement_regex = re.compile(
+            r'''
+            ^\$\(document\).ready\(function\s*\(\)\s*{(?:\n|\r\n?)
+            \s*Search.init\(\);(?:\n|\r\n?)
+            \}\);
+            ''',
+            (re.MULTILINE | re.VERBOSE)
+        )
+
+        log.info(bold('Updating searchtools for Read the Docs search... '), nonl=True)
+        with codecs.open(searchtools_file, 'r', encoding='utf-8') as infile:
+            data = infile.read()
+        with codecs.open(searchtools_file, 'w', encoding='utf-8') as outfile:
+            data = replacement_regex.sub(replacement_text, data)
+            outfile.write(data)
 
 
 def dump_sphinx_data(app, exception):
@@ -261,99 +292,18 @@ def dump_sphinx_data(app, exception):
         )
 
 
-class HtmlBuilderMixin(BuilderMixin):
+class ReadtheDocsSingleFileHTMLBuilderLocalMedia(SingleFileHTMLBuilder):
 
-    static_readthedocs_files = [
-        'readthedocs-data.js_t',
-        # We patch searchtools and copy it with a special handler
-        # 'searchtools.js_t'
-    ]
+    """Sphinx builder that builds a single HTML file that will be zipped by Read the Docs."""
 
-    REPLACEMENT_TEXT = '/* Search initialization removed for Read the Docs */'
-    REPLACEMENT_PATTERN = re.compile(
-        r'''
-        ^\$\(document\).ready\(function\s*\(\)\s*{(?:\n|\r\n?)
-        \s*Search.init\(\);(?:\n|\r\n?)
-        \}\);
-        ''',
-        (re.MULTILINE | re.VERBOSE)
-    )
-
-    def get_static_readthedocs_context(self):
-        ctx = super(HtmlBuilderMixin, self).get_static_readthedocs_context()
-        if self.indexer is not None:
-            ctx.update(self.indexer.context_for_searchtool())
-        return ctx
-
-    def copy_static_readthedocs_files(self):
-        super(HtmlBuilderMixin, self).copy_static_readthedocs_files()
-        self._copy_searchtools()
-
-    def _copy_searchtools(self, renderer=None):
-        """Copy and patch searchtools
-
-        This uses the included Sphinx version's searchtools, but patches it to
-        remove automatic initialization. This is a fork of
-        ``sphinx.util.fileutil.copy_asset``
-        """
-        log.info(bold('copying searchtools... '), nonl=True)
-
-        if sphinx.version_info < (1, 8):
-            search_js_file = 'searchtools.js_t'
-        else:
-            search_js_file = 'searchtools.js'
-        path_src = os.path.join(
-            package_dir, 'themes', 'basic', 'static', search_js_file
-        )
-        if os.path.exists(path_src):
-            path_dest = os.path.join(self.outdir, '_static', 'searchtools.js')
-            if renderer is None:
-                # Sphinx 1.4 used the renderer from the existing builder, but
-                # the pattern for Sphinx 1.5 is to pass in a renderer separate
-                # from the builder. This supports both patterns for future
-                # compatibility
-                if sphinx.version_info < (1, 5):
-                    renderer = self.templates
-                else:
-                    from sphinx.util.template import SphinxRenderer
-                    renderer = SphinxRenderer()
-            with codecs.open(path_src, 'r', encoding='utf-8') as h_src:
-                with codecs.open(path_dest, 'w', encoding='utf-8') as h_dest:
-                    data = h_src.read()
-                    data = self.REPLACEMENT_PATTERN.sub(self.REPLACEMENT_TEXT, data)
-                    h_dest.write(renderer.render_string(
-                        data,
-                        self.get_static_readthedocs_context()
-                    ))
-        else:
-            log.warning('Missing {}'.format(search_js_file))
-        log.info('done')
-
-
-class ReadtheDocsBuilder(HtmlBuilderMixin, StandaloneHTMLBuilder):
-    name = 'readthedocs'
-
-
-class ReadtheDocsDirectoryHTMLBuilder(HtmlBuilderMixin, DirectoryHTMLBuilder):
-    name = 'readthedocsdirhtml'
-
-
-class ReadtheDocsSingleFileHTMLBuilder(BuilderMixin, SingleFileHTMLBuilder):
-    name = 'readthedocssinglehtml'
-
-
-class ReadtheDocsSingleFileHTMLBuilderLocalMedia(BuilderMixin, SingleFileHTMLBuilder):
     name = 'readthedocssinglehtmllocalmedia'
 
 
 def setup(app):
-    app.add_builder(ReadtheDocsBuilder)
-    app.add_builder(ReadtheDocsDirectoryHTMLBuilder)
-    app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilderLocalMedia)
-    app.connect('builder-inited', finalize_media)
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
+    app.connect('build-finished', remove_search_init)
     app.connect('build-finished', dump_sphinx_data)
 
     # Embed
