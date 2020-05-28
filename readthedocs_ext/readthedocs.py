@@ -7,6 +7,7 @@ import json
 import os
 import re
 import types
+from datetime import datetime
 from distutils.version import LooseVersion
 
 import sphinx
@@ -24,9 +25,15 @@ except ImportError:
 
 try:
     # Available from Sphinx 2.0
+    from sphinx.builders.dirhtml import DirectoryHTMLBuilder
+    from sphinx.builders.html import StandaloneHTMLBuilder
     from sphinx.builders.singlehtml import SingleFileHTMLBuilder
 except ImportError:
-    from sphinx.builders.html import SingleFileHTMLBuilder
+    from sphinx.builders.html import (
+        DirectoryHTMLBuilder,
+        SingleFileHTMLBuilder,
+        StandaloneHTMLBuilder,
+    )
 
 log = getLogger(__name__)
 
@@ -36,13 +43,22 @@ DEFAULT_STATIC_URL = 'https://assets.readthedocs.org/static/'
 # Exclude the SingleHTML builder that is used by RTD to zip up local media
 # That builder is never used "online"
 ONLINE_BUILDERS = [
-    'html', 'dirhtml', 'singlehtml'
+    'html',
+    'dirhtml',
+    'singlehtml',
+    # Deprecated builders
+    'readthedocs',
+    'readthedocsdirhtml',
+    'readthedocssinglehtml',
 ]
 # Only run JSON output once during HTML build
 # This saves resources and keeps filepaths correct,
 # because singlehtml filepaths are different
 JSON_BUILDERS = [
-    'html', 'dirhtml',
+    'html',
+    'dirhtml',
+    'readthedocs',
+    'readthedocsdirhtml',
 ]
 
 # Whitelist keys that we want to output
@@ -63,7 +79,6 @@ def update_body(app, pagename, templatename, context, doctree):
 
     This is the most reliable way to inject our content into the page.
     """
-
     STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
@@ -127,6 +142,7 @@ def update_body(app, pagename, templatename, context, doctree):
                 'api_host': ctx.get('api_host', ''),
                 'commit': ctx.get('commit', ''),
                 'ad_free': ctx.get('ad_free', ''),
+                'build_date': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'global_analytics_code': ctx.get('global_analytics_code'),
                 'user_analytics_code': ctx.get('user_analytics_code'),
                 'subprojects': {
@@ -229,6 +245,8 @@ def remove_search_init(app, exception):
         with codecs.open(searchtools_file, 'w', encoding='utf-8') as outfile:
             data = replacement_regex.sub(replacement_text, data)
             outfile.write(data)
+    else:
+        log.warning('Missing searchtools: {}'.format(searchtools_file))
 
 
 def dump_sphinx_data(app, exception):
@@ -292,9 +310,53 @@ def dump_sphinx_data(app, exception):
         )
 
 
+class ReadtheDocsBuilder(StandaloneHTMLBuilder):
+
+    """
+    Sphinx builder that builds HTML docs.
+
+    Note: This builder is DEPRECATED.
+          In the future Read the Docs will use Sphinx's "html" instead.
+    """
+
+    name = 'readthedocs'
+
+
+class ReadtheDocsDirectoryHTMLBuilder(DirectoryHTMLBuilder):
+
+    """
+    Sphinx builder that builds docs with clean URLs where each page gets its own directory.
+
+    Note: This builder is DEPRECATED.
+          In the future Read the Docs will use Sphinx's "dirhtml" instead.
+    """
+
+    name = 'readthedocsdirhtml'
+
+
+class ReadtheDocsSingleFileHTMLBuilder(SingleFileHTMLBuilder):
+
+    """
+    Sphinx builder that builds a single HTML file to be served by Read the Docs.
+
+    This is for users who choose singlehtml as their main output format.
+    The downloadable .zip file is the builder below.
+
+    Note: This builder is DEPRECATED.
+          In the future Read the Docs will use Sphinx's "singlehtml" instead.
+    """
+
+    name = 'readthedocssinglehtml'
+
+
 class ReadtheDocsSingleFileHTMLBuilderLocalMedia(SingleFileHTMLBuilder):
 
-    """Sphinx builder that builds a single HTML file that will be zipped by Read the Docs."""
+    """
+    Sphinx builder that builds a single HTML file that will be zipped by Read the Docs.
+
+    Read the Docs specific extras are typically not added to this builder
+    since it is intended for offline use.
+    """
 
     name = 'readthedocssinglehtmllocalmedia'
 
@@ -312,5 +374,10 @@ def setup(app):
     app.add_config_value('readthedocs_embed_version', '', 'html')
     app.add_config_value('readthedocs_embed_doc', '', 'html')
     app.add_config_value('rtd_generate_json_artifacts', False, 'html')
+
+    # Deprecated builders
+    app.add_builder(ReadtheDocsBuilder)
+    app.add_builder(ReadtheDocsDirectoryHTMLBuilder)
+    app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
 
     return {}
