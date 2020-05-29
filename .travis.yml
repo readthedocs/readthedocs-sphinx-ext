@@ -6,7 +6,7 @@ python:
   - 3.8
 matrix:
   include:
-    - python: 2.7
+    - python: 3.7
       script: tox -e lint
     - python: 3.7
       dist: xenial

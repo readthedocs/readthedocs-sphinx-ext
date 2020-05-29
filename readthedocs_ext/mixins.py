@@ -18,7 +18,7 @@ except ImportError:
 log = getLogger(__name__)
 
 
-class BuilderMixin(object):  # pylint: disable=old-style-class
+class BuilderMixin(object):  # pylint: disable=useless-object-inheritance
 
     """Builder mixin class for copying and templating extra static files
 
