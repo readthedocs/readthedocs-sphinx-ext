@@ -18,16 +18,17 @@ http://docs.readthedocs.org/en/latest/canonical.html
 
 <link rel="stylesheet" href="{{ rtd_css_url }}" type="text/css" />
 
-<script type="text/javascript" src="{{ pathto('_static/readthedocs-data.js', 1) }}"></script>
+<script type="application/json" id="READTHEDOCS_DATA">{{ rtd_data | tojson }}</script>
 
-<!-- Add page-specific data, which must exist in the page js, not global -->
+<!--
+Using this variable directly instead of using `JSON.parse` is deprecated.
+The READTHEDOCS_DATA global variable will be removed in the future.
+-->
 <script type="text/javascript">
-READTHEDOCS_DATA['page'] = {{ pagename|tojson }}
-{%- if page_source_suffix %}
-READTHEDOCS_DATA['source_suffix'] = {{ page_source_suffix|tojson }}
-{%- endif %}
+READTHEDOCS_DATA = JSON.parse(document.getElementById('READTHEDOCS_DATA').innerHTML);
 </script>
 
 <script type="text/javascript" src="{{ rtd_analytics_url }}" async="async"></script>
+<script type="text/javascript" src="{{ rtd_js_url }}" async="async"></script>
 
 <!-- end RTD <extrahead> -->
