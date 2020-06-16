@@ -28,3 +28,7 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
 
 def setup(app):
     app.connect('doctree-resolved', process_external_version_warning_banner)
+
+    return {
+        'parallel_read_safe': True,
+    }

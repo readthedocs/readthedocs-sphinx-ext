@@ -363,4 +363,6 @@ def setup(app):
     app.add_config_value('readthedocs_embed_doc', '', 'html')
     app.add_config_value('rtd_generate_json_artifacts', False, 'html')
 
-    return {}
+    return {
+        'parallel_read_safe': True,
+    }
