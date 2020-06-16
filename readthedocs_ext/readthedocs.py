@@ -148,6 +148,9 @@ def update_body(app, pagename, templatename, context, doctree):
                 'subprojects': {
                     slug: url for slug, url in ctx.get('subprojects', [])
                 },
+                'features': {
+                    'docsearch_disabled': ctx.get('docsearch_disabled', False),
+                },
             }
             if ctx.get('page_source_suffix'):
                 ctx['rtd_data']['source_suffix'] = ctx['page_source_suffix']
