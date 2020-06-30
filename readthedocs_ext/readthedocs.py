@@ -383,4 +383,6 @@ def setup(app):
     app.add_builder(ReadtheDocsDirectoryHTMLBuilder)
     app.add_builder(ReadtheDocsSingleFileHTMLBuilder)
 
-    return {}
+    return {
+        'parallel_read_safe': True,
+    }

@@ -64,3 +64,7 @@ def setup(app):
     app.connect('doctree-resolved', process_meta)
     app.add_config_value('versionwarning-node', True, 'html')
     app.add_config_value('versionwarning-console', True, 'html')
+
+    return {
+        'parallel_read_safe': True,
+    }
