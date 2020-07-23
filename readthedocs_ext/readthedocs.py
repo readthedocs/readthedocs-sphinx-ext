@@ -111,6 +111,23 @@ def update_body(app, pagename, templatename, context, doctree):
         else:
             app.add_css_file(theme_css)
 
+    # Add the Read the Docs embed
+    # This *must* come after Sphinx has loaded jQuery as it relies on it.
+    # Unless this script is modified to not rely on jQuery (a good goal),
+    # it can't just be put into the extrahead
+    # in case a theme outputs scripts at the end of the body
+    js_file = '{}javascript/readthedocs-doc-embed.js'.format(STATIC_URL)
+    if all((
+        app.builder.name in ONLINE_BUILDERS,
+        hasattr(app.builder, 'script_files'),
+        js_file not in app.builder.script_files,
+    )):
+        if sphinx.version_info < (1, 8):
+            app.builder.script_files.append(js_file)
+        else:
+            kwargs = {'async': 'async'}     # Workaround reserved word in Py3.7
+            app.add_js_file(js_file, **kwargs)
+
     # This is monkey patched on the signal because we can't know what the user
     # has done with their `app.builder.templates` before now.
 
@@ -157,7 +174,6 @@ def update_body(app, pagename, templatename, context, doctree):
             if ctx.get('proxied_api_host'):
                 ctx['rtd_data']['proxied_api_host'] = ctx['proxied_api_host']
             ctx['rtd_css_url'] = '{}css/readthedocs-doc-embed.css'.format(STATIC_URL)
-            ctx['rtd_js_url'] = '{}javascript/readthedocs-doc-embed.js'.format(STATIC_URL)
             ctx['rtd_analytics_url'] = '{}javascript/readthedocs-analytics.js'.format(STATIC_URL)
             source = os.path.join(
                 os.path.abspath(os.path.dirname(__file__)),
