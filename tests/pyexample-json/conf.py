@@ -22,3 +22,4 @@ todo_include_todos = False
 html_theme = 'alabaster'
 html_static_path = ['_static']
 htmlhelp_basename = 'pyexampledoc'
+html_baseurl = 'https://example.com/'
