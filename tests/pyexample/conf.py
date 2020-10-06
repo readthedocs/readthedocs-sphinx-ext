@@ -29,4 +29,5 @@ html_context = {
     'user_analytics_code': '',
     'global_analytics_code': "malic''ious",
     'commit': 'deadd00d',
+    'canonical_url': 'https://example.com/"',
 }

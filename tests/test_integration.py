@@ -1,18 +1,24 @@
 import unittest
 
-from .util import sphinx_build, build_output
+import pytest
+from sphinx import version_info
+
+from .util import build_output, sphinx_build
 
 
 class LanguageIntegrationTests(unittest.TestCase):
 
-    def _run_test(self, test_dir, test_file, test_string, builder='html'):
+    def _run_test(self, test_dir, test_file, test_string, builder='html', assert_in=True):
         with build_output(test_dir, test_file, builder) as data:
             if not isinstance(test_string, list):
                 test_strings = [test_string]
             else:
                 test_strings = test_string
             for string in test_strings:
-                self.assertIn(string, data)
+                if assert_in:
+                    self.assertIn(string, data)
+                else:
+                    self.assertNotIn(string, data)
 
 
 class IntegrationTests(LanguageIntegrationTests):
@@ -90,3 +96,28 @@ class IntegrationTests(LanguageIntegrationTests):
         with build_output('pyexample', '_build/html/index.html', builder='html') as data:
             self.assertNotIn("malic''ious", data)
             self.assertIn('malic\\u0027\\u0027ious', data)
+
+    def test_escape_canonical_url(self):
+        self._run_test(
+            'pyexample',
+            '_build/html/index.html',
+            '<link rel="canonical" href="https://example.com/&#34;" />',
+            builder='html',
+        )
+
+    @pytest.mark.skipif(version_info < (1, 8), reason='Requires sphinx>=1.8')
+    def test_canonical_url(self):
+        self._run_test(
+            'pyexample-json',
+            '_build/html/index.html',
+            'Always link to the latest version, as canonical.',
+            builder='html',
+            assert_in=False,
+        )
+
+        self._run_test(
+            'pyexample-json',
+            '_build/html/index.html',
+            '<link rel="canonical" href="https://example.com/index.html" />',
+            builder='html',
+        )
