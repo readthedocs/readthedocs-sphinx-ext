@@ -127,7 +127,7 @@ class IntegrationTests(LanguageIntegrationTests):
         self._run_test(
             'pr-example',
             '_build/html/index.html',
-            # This can have a last class is old versions of sphinx
+            # This paragraph can have a "last" class in old versions of sphinx
             # <p class="last">
             '>This page '
             '<a class="reference external" href="https://readthedocs.org/projects/docs/builds/12759474/">'
