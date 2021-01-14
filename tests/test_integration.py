@@ -127,7 +127,9 @@ class IntegrationTests(LanguageIntegrationTests):
         self._run_test(
             'pr-example',
             '_build/html/index.html',
-            '<p>This page '
+            # This can have a last class is old versions of sphinx
+            # <p class="last">
+            '>This page '
             '<a class="reference external" href="https://readthedocs.org/projects/docs/builds/12759474/">'
             'was created </a>'
             'from a pull request '
