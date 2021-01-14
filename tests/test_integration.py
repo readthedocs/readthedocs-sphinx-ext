@@ -1,4 +1,5 @@
 import unittest
+from textwrap import dedent
 
 import pytest
 from sphinx import version_info
@@ -119,5 +120,18 @@ class IntegrationTests(LanguageIntegrationTests):
             'pyexample-json',
             '_build/html/index.html',
             '<link rel="canonical" href="https://example.com/index.html" />',
+            builder='html',
+        )
+
+    def test_version_warning(self):
+        self._run_test(
+            'pr-example',
+            '_build/html/index.html',
+            '<p>This page '
+            '<a class="reference external" href="https://readthedocs.org/projects/docs/builds/12759474/">'
+            'was created </a>'
+            'from a pull request '
+            '(<a class="reference external" href="https://github.com/readthedocs/readthedocs.org/pull/7826">'
+            '#123</a>).</p>',
             builder='html',
         )
