@@ -100,7 +100,7 @@ def update_body(app, pagename, templatename, context, doctree):
     # This decouples the theme CSS (which is versioned independently) from readthedocs.org
     if theme_css.endswith('sphinx_rtd_theme.css'):
         try:
-            import sphinx_rtd_theme
+            import sphinx_rtd_theme  # noqa
             inject_css = LooseVersion(sphinx_rtd_theme.__version__) < LooseVersion('0.4.0')
         except ImportError:
             pass
@@ -162,9 +162,7 @@ def update_body(app, pagename, templatename, context, doctree):
                 'build_date': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'global_analytics_code': ctx.get('global_analytics_code'),
                 'user_analytics_code': ctx.get('user_analytics_code'),
-                'subprojects': {
-                    slug: url for slug, url in ctx.get('subprojects', [])
-                },
+                'subprojects': dict(ctx.get('subprojects', [])),
                 'features': {
                     'docsearch_disabled': ctx.get('docsearch_disabled', False),
                 },
