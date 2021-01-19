@@ -3,9 +3,9 @@ Read the Docs Sphinx Extensions
 
 .. image:: https://img.shields.io/pypi/v/readthedocs-sphinx-ext.svg
    :target: https://pypi.python.org/pypi/readthedocs-sphinx-ext
-   :alt: Pypi Version 
-.. image:: https://travis-ci.org/readthedocs/readthedocs-sphinx-ext.svg?branch=master
-   :target: https://travis-ci.org/readthedocs/readthedocs-sphinx-ext
+   :alt: Pypi Version
+.. image:: https://circleci.com/gh/readthedocs/readthedocs-sphinx-ext.svg?style=svg
+   :target: https://circleci.com/gh/readthedocs/readthedocs-sphinx-ext
    :alt: Build Status
 
 This module adds extensions that make Sphinx easier to use.
@@ -21,13 +21,11 @@ We currently ship:
 Releasing
 ---------
 
-#. Increment the version in ``setup.py``
-#. Tag the release in git: ``git tag $NEW_VERSION``.
-#. Push the tag to GitHub: ``git push --tags origin master``
-#. Upload the package to PyPI:
+#. Increment the version in ``readthedocs_ext.__init__.py``
+#. Open a PR with the changes
+#. To create a tag and push to PyPI run:
 
-    .. code:: bash
+   .. code:: bash
 
-        $ rm -rf dist/
-        $ python setup.py sdist bdist_wheel
-        $ twine upload --sign --identity security@readthedocs.org dist/*
+      make tag
+      make release
