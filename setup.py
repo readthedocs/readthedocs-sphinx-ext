@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='readthedocs-sphinx-ext',
-    version='2.1.2',
+    version='2.1.3',
     author='Read the Docs, Inc',
     author_email='dev@readthedocs.com',
     url='http://github.com/readthedocs/readthedocs-sphinx-ext',
