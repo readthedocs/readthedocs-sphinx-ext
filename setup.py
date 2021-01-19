@@ -1,10 +1,12 @@
 import codecs
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
+
+from readthedocs_ext import __version__
 
 setup(
     name='readthedocs-sphinx-ext',
-    version='2.1.3',
+    version=__version__,
     author='Read the Docs, Inc',
     author_email='dev@readthedocs.com',
     url='http://github.com/readthedocs/readthedocs-sphinx-ext',
@@ -14,7 +16,6 @@ setup(
     package_dir={'': '.'},
     packages=find_packages('.', exclude=['tests']),
     long_description=codecs.open("README.rst", "r", "utf-8").read(),
-    # trying to add files...
     include_package_data=True,
     package_data={
         '': ['_static/*.js', '_static/*.js_t', '_static/*.css', '_templates/*.tmpl'],
