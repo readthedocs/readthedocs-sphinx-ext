@@ -257,11 +257,14 @@ def remove_search_init(app, exception):
         )
 
         log.info(bold('Updating searchtools for Read the Docs search... '), nonl=True)
-        with codecs.open(searchtools_file, 'r', encoding='utf-8') as infile:
-            data = infile.read()
-        with codecs.open(searchtools_file, 'w', encoding='utf-8') as outfile:
-            data = replacement_regex.sub(replacement_text, data)
-            outfile.write(data)
+        try:
+            with codecs.open(searchtools_file, 'r', encoding='utf-8') as infile:
+                data = infile.read()
+            with codecs.open(searchtools_file, 'w', encoding='utf-8') as outfile:
+                data = replacement_regex.sub(replacement_text, data)
+                outfile.write(data)
+        except Exception:
+            log.exception('FAILED')
     else:
         log.warning('Missing searchtools: {}'.format(searchtools_file))
 
