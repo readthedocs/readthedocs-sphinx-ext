@@ -237,7 +237,15 @@ def generate_json_artifacts(app, pagename, templatename, context, doctree):
 
 
 def remove_search_init(app, exception):
-    """Remove Sphinx's Search.init() so it can be initialized by Read the Docs."""
+    """
+    Remove Sphinx's Search.init() so it can be initialized by Read the Docs.
+
+    RTD needs to call ``Search.init()`` after overriding some of its methods.
+    We remove the ``Search.init()`` call from Sphinx to avoid calling it twice.
+
+    - https://github.com/sphinx-doc/sphinx/blob/799385f5558a888d1a143bf703d06b66d6717fe4/sphinx/themes/basic/static/searchtools.js#L527-L529
+    - https://github.com/sphinx-doc/sphinx/blob/3b01fbe2adf3077cad5c2cf345c6d000d429d7ac/sphinx/themes/basic/static/searchtools.js#L507
+    """
     if exception:
         return
 
