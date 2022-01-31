@@ -8,7 +8,7 @@ commands:
         type: string
       sphinx-version:
         type: string
-        default: "21,22,23,24,30,31,32,33,34,latest"
+        default: "21,22,23,24,30,31,32,33,34,35,40,41,42,43,44,latest"
     steps:
       - checkout
       - run: pip install --user tox
@@ -48,6 +48,13 @@ jobs:
       - run-tox:
           version: py39
 
+  py310:
+    docker:
+      - image: 'cimg/python:3.10'
+    steps:
+      - run-tox:
+          version: py310
+
   lint:
     docker:
       - image: 'cimg/python:3.9'
@@ -61,6 +68,7 @@ workflows:
   tests:
     jobs:
       - lint
+      - py310
       - py39
       - py38
       - py37

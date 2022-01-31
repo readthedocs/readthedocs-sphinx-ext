@@ -249,9 +249,12 @@ def remove_search_init(app, exception):
         replacement_text = '/* Search initialization removed for Read the Docs */'
         replacement_regex = re.compile(
             r'''
-            ^\$\(document\).ready\(function\s*\(\)\s*{(?:\n|\r\n?)
+            ^(\$\(document\).ready\(function\s*\(\)\s*{(?:\n|\r\n?)
             \s*Search.init\(\);(?:\n|\r\n?)
-            \}\);
+            \}\);)
+            |
+            # Sphinx >=5.0 calls Search.init this way.
+            (_ready\(Search.init\);)
             ''',
             (re.MULTILINE | re.VERBOSE)
         )
