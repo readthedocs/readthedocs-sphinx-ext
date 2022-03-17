@@ -4,8 +4,8 @@ Read the Docs Sphinx Extensions
 .. image:: https://img.shields.io/pypi/v/readthedocs-sphinx-ext.svg
    :target: https://pypi.python.org/pypi/readthedocs-sphinx-ext
    :alt: Pypi Version 
-.. image:: https://travis-ci.org/readthedocs/readthedocs-sphinx-ext.svg?branch=master
-   :target: https://travis-ci.org/readthedocs/readthedocs-sphinx-ext
+.. image:: https://circleci.com/gh/readthedocs/readthedocs-sphinx-ext.svg?style=svg
+   :target: https://circleci.com/gh/readthedocs/readthedocs-sphinx-ext
    :alt: Build Status
 
 This module adds extensions that make Sphinx easier to use.
@@ -23,7 +23,7 @@ Releasing
 
 #. Increment the version in ``setup.py``
 #. Tag the release in git: ``git tag $NEW_VERSION``.
-#. Push the tag to GitHub: ``git push --tags origin master``
+#. Push the tag to GitHub: ``git push --tags origin main``
 #. Upload the package to PyPI:
 
     .. code:: bash
