@@ -48,9 +48,7 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
     ]
     prose = nodes.paragraph('', '', *children)
     warning_node = nodes.warning(prose, prose)
-
-    for document in doctree.traverse(nodes.document):
-        document.insert(0, warning_node)
+    doctree.insert(0, warning_node)
 
 
 def setup(app):
