@@ -79,7 +79,7 @@ def update_body(app, pagename, templatename, context, doctree):
 
     This is the most reliable way to inject our content into the page.
     """
-    STATIC_URL = context.get('STATIC_URL', DEFAULT_STATIC_URL)
+    STATIC_URL = context.get('proxied_static_path', context.get('STATIC_URL', DEFAULT_STATIC_URL))
     if app.builder.name == 'readthedocssinglehtmllocalmedia':
         if 'html_theme' in context and context['html_theme'] == 'sphinx_rtd_theme':
             theme_css = '_static/css/theme.css'
