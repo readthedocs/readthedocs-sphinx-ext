@@ -8,7 +8,7 @@ import os
 import re
 import types
 from datetime import datetime
-from distutils.version import LooseVersion
+from packaging.version import Version
 
 import sphinx
 from sphinx import package_dir
@@ -101,7 +101,7 @@ def update_body(app, pagename, templatename, context, doctree):
     if theme_css.endswith('sphinx_rtd_theme.css'):
         try:
             import sphinx_rtd_theme  # noqa
-            inject_css = LooseVersion(sphinx_rtd_theme.__version__) < LooseVersion('0.4.0')
+            inject_css = Version(sphinx_rtd_theme.__version__) < Version('0.4.0')
         except ImportError:
             pass
 
