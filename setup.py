@@ -10,7 +10,7 @@ setup(
     url='http://github.com/readthedocs/readthedocs-sphinx-ext',
     license='MIT',
     description='Sphinx extension for Read the Docs overrides',
-    install_requires=['requests', 'Jinja2>=2.9'],
+    install_requires=['requests', 'Jinja2>=2.9', 'packaging'],
     package_dir={'': '.'},
     packages=find_packages('.', exclude=['tests']),
     long_description=codecs.open("README.rst", "r", "utf-8").read(),
