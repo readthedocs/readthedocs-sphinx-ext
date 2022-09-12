@@ -1,4 +1,5 @@
 from docutils import nodes
+from sphinx import addnodes
 
 try:
     # Available from Sphinx 1.6
@@ -16,6 +17,9 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
     If the version type is external this will show a warning banner
     at the top of each page of the documentation.
     """
+    if not isinstance(doctree, addnodes.document):
+        return
+
     is_gitlab = app.config.html_context.get('display_gitlab')
     name = 'merge request' if is_gitlab else 'pull request'
 
