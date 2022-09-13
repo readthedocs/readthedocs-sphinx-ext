@@ -17,10 +17,9 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
     If the version type is external this will show a warning banner
     at the top of each page of the documentation.
     """
-    # For unknown reason Sphinx emits this not only for
-    # actual documents, but also, e.g., docutils.nodes.bullet_list
-    # We don't want this warning to appear in random places,
-    # thus we return here if the doctree doesnt represent a document
+    # Sphinx itself always emits this with a document node,
+    # but extensions can also call `resolve_references` with other types
+    # of nodes, we don't want to inject the banner in those.
     # Details:
     # - https://github.com/readthedocs/readthedocs-sphinx-ext/issues/113
     # - https://github.com/readthedocs/readthedocs-sphinx-ext/pull/114
