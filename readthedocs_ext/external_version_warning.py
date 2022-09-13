@@ -23,7 +23,7 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
     # Details:
     # - https://github.com/readthedocs/readthedocs-sphinx-ext/issues/113
     # - https://github.com/readthedocs/readthedocs-sphinx-ext/pull/114
-    if not isinstance(doctree, addnodes.document):
+    if not isinstance(doctree, nodes.document):
         return
 
     is_gitlab = app.config.html_context.get('display_gitlab')
