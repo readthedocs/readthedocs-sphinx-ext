@@ -1,5 +1,4 @@
 from docutils import nodes
-from sphinx import addnodes
 
 try:
     # Available from Sphinx 1.6
