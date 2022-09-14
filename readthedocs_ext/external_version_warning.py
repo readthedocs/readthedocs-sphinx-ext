@@ -16,6 +16,15 @@ def process_external_version_warning_banner(app, doctree, fromdocname):
     If the version type is external this will show a warning banner
     at the top of each page of the documentation.
     """
+    # Sphinx itself always emits this with a document node,
+    # but extensions can also call `resolve_references` with other types
+    # of nodes, we don't want to inject the banner in those.
+    # Details:
+    # - https://github.com/readthedocs/readthedocs-sphinx-ext/issues/113
+    # - https://github.com/readthedocs/readthedocs-sphinx-ext/pull/114
+    if not isinstance(doctree, nodes.document):
+        return
+
     is_gitlab = app.config.html_context.get('display_gitlab')
     name = 'merge request' if is_gitlab else 'pull request'
 
