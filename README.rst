@@ -3,7 +3,7 @@ Read the Docs Sphinx Extensions
 
 .. image:: https://img.shields.io/pypi/v/readthedocs-sphinx-ext.svg
    :target: https://pypi.python.org/pypi/readthedocs-sphinx-ext
-   :alt: Pypi Version
+   :alt: PyPI Version
 .. image:: https://circleci.com/gh/readthedocs/readthedocs-sphinx-ext.svg?style=svg
    :target: https://circleci.com/gh/readthedocs/readthedocs-sphinx-ext
    :alt: Build Status
