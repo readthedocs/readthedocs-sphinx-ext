@@ -338,6 +338,25 @@ def dump_sphinx_data(app, exception):
         )
 
 
+def dump_telemetry(app, config):
+    # We need to get the output directory where the docs are built
+    # _build/json.
+    build_json = os.path.abspath(
+        os.path.join(app.outdir, '..', 'json')
+    )
+    outjson = os.path.join(build_json, 'telemetry.json')
+    outdir = os.path.dirname(outjson)
+    if not os.path.exists(outdir):
+        os.makedirs(outdir)
+    with open(outjson, 'w+') as json_file:
+        data = {
+            # https://github.com/sphinx-doc/sphinx/blob/5.x/sphinx/application.py#L139
+            'extensions': [name for name, _ in app.extensions.items()],
+            'html_theme': app.config.html_theme,
+        }
+        json.dump(data, json_file, indent=4)
+
+
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
 
     """
@@ -395,6 +414,9 @@ def setup(app):
     app.connect('html-page-context', generate_json_artifacts)
     app.connect('build-finished', remove_search_init)
     app.connect('build-finished', dump_sphinx_data)
+
+    if sphinx.version_info >= (1, 8, 0):
+        app.connect('config-inited', dump_telemetry)
 
     # Embed
     app.add_directive('readthedocs-embed', EmbedDirective)
