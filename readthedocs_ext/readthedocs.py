@@ -346,15 +346,20 @@ def dump_telemetry(app, config):
     )
     outjson = os.path.join(build_json, 'telemetry.json')
     outdir = os.path.dirname(outjson)
-    if not os.path.exists(outdir):
-        os.makedirs(outdir)
-    with open(outjson, 'w+') as json_file:
-        data = {
-            # https://github.com/sphinx-doc/sphinx/blob/5.x/sphinx/application.py#L139
-            'extensions': [name for name, _ in app.extensions.items()],
-            'html_theme': app.config.html_theme,
-        }
-        json.dump(data, json_file, indent=4)
+    try:
+
+        if not os.path.exists(outdir):
+            os.makedirs(outdir)
+
+        with open(outjson, 'w+') as json_file:
+            data = {
+                # https://github.com/sphinx-doc/sphinx/blob/5.x/sphinx/application.py#L139
+                'extensions': [name for name, _ in app.extensions.items()],
+                'html_theme': app.config.html_theme,
+            }
+            json.dump(data, json_file, indent=4)
+    except Exception:
+        log.exception("Something went wrong when dumping Telemetry data.")
 
 
 class ReadtheDocsBuilder(StandaloneHTMLBuilder):
