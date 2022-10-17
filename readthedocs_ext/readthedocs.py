@@ -346,8 +346,8 @@ def dump_telemetry(app, config):
     )
     outjson = os.path.join(build_json, 'telemetry.json')
     outdir = os.path.dirname(outjson)
-    try:
 
+    try:
         if not os.path.exists(outdir):
             os.makedirs(outdir)
 
