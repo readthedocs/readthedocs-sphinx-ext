@@ -353,8 +353,7 @@ def dump_telemetry(app, config):
 
         with open(outjson, 'w+') as json_file:
             data = {
-                # https://github.com/sphinx-doc/sphinx/blob/5.x/sphinx/application.py#L139
-                'extensions': [name for name, _ in app.extensions.items()],
+                'extensions': app.config.extensions,
                 'html_theme': app.config.html_theme,
             }
             json.dump(data, json_file, indent=4)
