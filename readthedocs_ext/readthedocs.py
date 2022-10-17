@@ -421,6 +421,7 @@ def setup(app):
     app.connect('build-finished', dump_sphinx_data)
 
     if sphinx.version_info >= (1, 8, 0):
+        # `config-inited` event was introduced in Sphinx 1.8
         app.connect('config-inited', dump_telemetry)
 
     # Embed
