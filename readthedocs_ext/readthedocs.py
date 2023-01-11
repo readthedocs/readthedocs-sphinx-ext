@@ -7,11 +7,9 @@ import json
 import os
 import re
 import types
-from datetime import datetime
 from packaging.version import Version
 
 import sphinx
-from sphinx import package_dir
 from sphinx.util.console import bold
 
 
@@ -159,7 +157,6 @@ def update_body(app, pagename, templatename, context, doctree):
                 'api_host': ctx.get('api_host', ''),
                 'commit': ctx.get('commit', ''),
                 'ad_free': ctx.get('ad_free', ''),
-                'build_date': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
                 'global_analytics_code': ctx.get('global_analytics_code'),
                 'user_analytics_code': ctx.get('user_analytics_code'),
                 'subprojects': dict(ctx.get('subprojects', [])),
