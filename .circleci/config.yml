@@ -11,8 +11,10 @@ commands:
         default: "21,22,23,24,30,31,32,33,34,35,40,41,42,43,44,latest"
     steps:
       - checkout
-      - run: pip install --user 'tox<5'
-      - run: tox run -e "<<parameters.version>>-sphinx{<<parameters.sphinx-version>>}"
+      # NOTE: update tox to tox<5 when https://github.com/tox-dev/tox/issues/2850
+      # is fixed.
+      - run: pip install --user 'tox<4'
+      - run: tox -e "<<parameters.version>>-sphinx{<<parameters.sphinx-version>>}"
 
 jobs:
   py27:
