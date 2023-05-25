@@ -155,7 +155,6 @@ def update_body(app, pagename, templatename, context, doctree):
                 'source_suffix': ctx.get('source_suffix', ''),
                 'page': ctx.get('pagename', ''),
                 'api_host': ctx.get('api_host', ''),
-                'commit': ctx.get('commit', ''),
                 'ad_free': ctx.get('ad_free', ''),
                 'global_analytics_code': ctx.get('global_analytics_code'),
                 'user_analytics_code': ctx.get('user_analytics_code'),
