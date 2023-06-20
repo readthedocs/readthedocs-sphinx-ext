@@ -273,7 +273,6 @@ def remove_search_init(app, exception):
         log.warning('Missing searchtools: {}'.format(searchtools_file))
 
 
-
 def dump_telemetry(app, config):
     # We need to get the output directory where the docs are built
     # _build/json.
