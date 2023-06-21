@@ -273,67 +273,6 @@ def remove_search_init(app, exception):
         log.warning('Missing searchtools: {}'.format(searchtools_file))
 
 
-def dump_sphinx_data(app, exception):
-    """
-    Dump data that is only in memory during Sphinx build.
-    This is mostly used for search indexing.
-
-    This includes:
-
-    * `paths`: A mapping of HTML Filename -> RST file
-    * `pages`: A mapping of HTML Filename -> Sphinx Page name
-    * `titles`: A mapping of HTML Filename -> Page Title
-    * `types`: A mapping of Sphinx Domain type slugs -> human-readable name for that type
-
-    """
-    if app.builder.name not in JSON_BUILDERS or exception:
-        return
-    try:
-        types = {}
-        titles = {}
-        paths = {}
-        pages = {}
-
-        for domain_name, domain_obj in app.env.domains.items():
-            for type_name, type_obj in domain_obj.object_types.items():
-                key = "{}:{}".format(domain_name, type_name)
-                types[key] = str(type_obj.lname)
-
-        for page, title in app.env.titles.items():
-            page_uri = app.builder.get_target_uri(page)
-            titles[page_uri] = title.astext()
-            paths[page_uri] = app.env.doc2path(page, base=None)
-            pages[page_uri] = page
-
-        to_dump = {
-            'types': types,
-            'titles': titles,
-            'paths': paths,
-            'pages': pages,
-        }
-
-        # We need to get the output directory where the docs are built
-        # _build/json.
-        build_json = os.path.abspath(
-            os.path.join(app.outdir, '..', 'json')
-        )
-        outjson = os.path.join(build_json, 'readthedocs-sphinx-domain-names.json')
-        with open(outjson, 'w+') as json_file:
-            json.dump(to_dump, json_file, indent=4)
-    except TypeError:
-        log.exception(
-            'Fail to encode JSON for object names'
-        )
-    except IOError:
-        log.exception(
-            'Fail to save JSON for object names'
-        )
-    except Exception:
-        log.exception(
-            'Failure in JSON search dump for object names'
-        )
-
-
 def dump_telemetry(app, config):
     # We need to get the output directory where the docs are built
     # _build/json.
@@ -413,7 +352,6 @@ def setup(app):
     app.connect('html-page-context', update_body)
     app.connect('html-page-context', generate_json_artifacts)
     app.connect('build-finished', remove_search_init)
-    app.connect('build-finished', dump_sphinx_data)
 
     if sphinx.version_info >= (1, 8, 0):
         # `config-inited` event was introduced in Sphinx 1.8
