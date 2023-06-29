@@ -31,4 +31,4 @@ Releasing
         $ python -m pip install --upgrade pip build twine
         $ rm -rf dist/
         $ python -m build --sdist --wheel
-        $ twine upload --sign --identity security@readthedocs.org dist/*
+        $ twine upload --username=__token__ --password=$PYPI_TOKEN dist/*
