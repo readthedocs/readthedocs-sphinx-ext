@@ -270,7 +270,7 @@ def remove_search_init(app, exception):
             data = replacement_regex.sub(replacement_text, data)
             outfile.write(data)
     else:
-        log.warning('Missing searchtools: {}'.format(searchtools_file))
+        log.info('Missing searchtools: {}'.format(searchtools_file))
 
 
 def dump_telemetry(app, config):
