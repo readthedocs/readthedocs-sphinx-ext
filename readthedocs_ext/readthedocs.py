@@ -250,7 +250,15 @@ def remove_search_init(app, exception):
     )
 
     if os.path.exists(searchtools_file):
-        replacement_text = '/* Search initialization removed for Read the Docs */'
+        replacement_text = """
+/* Search initialization manipulated by Read the Docs */
+/* See https://github.com/readthedocs/addons/issues/213 for more information */
+
+const addonsInjected = document.querySelector('script[src="/_/static/javascript/readthedocs-addons.js"]');
+if (addonsInjected) {
+  _ready(Sphinx.init);
+}
+"""
         replacement_regex = re.compile(
             r'''
             ^(\$\(document\).ready\(function\s*\(\)\s*{(?:\n|\r\n?)
