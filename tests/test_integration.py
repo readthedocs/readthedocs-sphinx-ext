@@ -63,7 +63,9 @@ class IntegrationTests(LanguageIntegrationTests):
 /* Search initialization manipulated by Read the Docs */
 /* See https://github.com/readthedocs/addons/issues/213 for more information */
 
-const addonsInjected = document.querySelector('script[src="/_/static/javascript/readthedocs-addons.js"]');
+const addonsInjected = document.querySelector(
+        'script[src="/_/static/javascript/readthedocs-addons.js"]'
+        );
 if (addonsInjected) {
   _ready(Sphinx.init);
 }
