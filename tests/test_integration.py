@@ -61,7 +61,9 @@ class IntegrationTests(LanguageIntegrationTests):
                           builder='html') as data:
             search_content = "if (addonsInjected)"
             self.assertIn(search_content, data)
-            search_content = "_ready(Search.init);"
+            search_content = "Search.init();"
+            self.assertIn(search_content, data)
+            search_content = "_ready(triggerSearch);"
             self.assertIn(search_content, data)
 
     def test_generate_json_artifacts(self):
