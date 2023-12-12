@@ -59,17 +59,9 @@ class IntegrationTests(LanguageIntegrationTests):
     def test_searchtools_is_patched(self):
         with build_output('pyexample', '_build/html/_static/searchtools.js',
                           builder='html') as data:
-            search_content = """
-/* Search initialization manipulated by Read the Docs */
-/* See https://github.com/readthedocs/addons/issues/213 for more information */
-
-const addonsInjected = document.querySelector(
-        'script[src="/_/static/javascript/readthedocs-addons.js"]'
-        );
-if (addonsInjected) {
-  _ready(Sphinx.init);
-}
-"""
+            search_content = "if (addonsInjected)"
+            self.assertIn(search_content, data)
+            search_content = "_ready(Search.init);"
             self.assertIn(search_content, data)
 
     def test_generate_json_artifacts(self):
